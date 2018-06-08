@@ -1,5 +1,13 @@
 {
   "extends": "airbnb-base",
+  "globals": {
+    "afterAll": true,
+    "beforeAll": true,
+    "beforeEach": true,
+    "describe": true,
+    "expect": true,
+    "it": true
+  },
   "rules": {
     "class-methods-use-this": "off"
   }

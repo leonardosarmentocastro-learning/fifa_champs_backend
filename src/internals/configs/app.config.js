@@ -10,6 +10,12 @@ const DEFAULT = {
     host: 'api.giphy.com',
   },
   ip: '127.0.0.1',
+  mongodb: {
+    database: {
+      name: 'db-development-fifa-champs',
+    },
+    host: '127.0.0.1',
+  },
   port: 8080,
 };
 
@@ -25,6 +31,17 @@ const giphy = {
 // # I
 const ip = getenv.string('IP', DEFAULT.ip);
 
+// # M
+const mongodb = {
+  database: {
+    name: getenv.string('MONGODB_DATABASE_NAME', DEFAULT.mongodb.database.name),
+  },
+  host: getenv.string('MONGODB_HOST', DEFAULT.mongodb.host),
+  uri: '',
+};
+mongodb.uri = `mongodb://${mongodb.host}/${mongodb.database.name}`;
+
+
 // # P
 const port = getenv.string('PORT', DEFAULT.port);
 
@@ -38,6 +55,7 @@ const APP_CONFIG = {
   ip,
   IS_DEVELOPMENT_ENVIRONMENT,
   IS_TEST_ENVIRONMENT,
+  mongodb,
   port,
 };
 module.exports = APP_CONFIG;

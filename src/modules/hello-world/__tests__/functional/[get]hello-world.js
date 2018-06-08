@@ -4,13 +4,9 @@ const {
   startWebserver,
 } = require('../../../../helpers/functional-tests.helper');
 
-beforeAll(() => {
-  return startWebserver();
-});
+beforeAll(() => startWebserver());
 
-afterAll(() => {
-  return closeWebserver();
-});
+afterAll(() => closeWebserver());
 
 describe('[GET] /hello-world', () => {
   describe('it must return on its "body"', () => {

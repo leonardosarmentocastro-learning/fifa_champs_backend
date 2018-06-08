@@ -5,7 +5,7 @@ const Webserver = require('../webserver');
 
 const webserver = new Webserver();
 const functionalTestsHelper = {
-  // Returns an "axios" instance which baseURL points to our API endpoint.
+  // Returns an "axios" instance which baseURL points to our API endpoint.
   API: (() => {
     const {
       ip,
@@ -22,7 +22,7 @@ const functionalTestsHelper = {
   },
   startWebserver() {
     return webserver.start();
-  }
+  },
 };
 
 module.exports = functionalTestsHelper;

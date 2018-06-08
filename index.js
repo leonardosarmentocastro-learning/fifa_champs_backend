@@ -1,8 +1,10 @@
 const Webserver = require('./src/webserver');
 
-try {
-  const webserver = new Webserver();
-  webserver.start();
-} catch(error) {
-  console.error(error);
-}
+(async () => {
+  try {
+    const webserver = new Webserver();
+    return await webserver.start();
+  } catch(error) {
+    console.error(error);
+  }
+})();
