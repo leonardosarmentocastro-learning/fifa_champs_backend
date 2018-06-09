@@ -27,4 +27,18 @@ describe('[unit-test] authenticationService', () => {
       });
     });
   });
+
+  describe('[method] isAnValidJwtToken', () => {
+    describe('by receiving an invalid jwt token', () => {
+      it('it must return "false" boolean value', () => {
+
+      });
+    });
+
+    describe('by receiving a valid jwt token', () => {
+      it('it must return "true" boolean value', () => {
+
+      });
+    });
+  });
 });
