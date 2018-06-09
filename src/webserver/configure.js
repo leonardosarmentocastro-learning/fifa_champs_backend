@@ -5,8 +5,13 @@ const errorhandler = require('errorhandler');
 const morgan = require('morgan');
 
 const { APP_CONFIG } = require('./../internals/configs');
+const authenticationInterceptor = require('../modules/authentication/interceptor');
 
 const configure = {
+  connectAuthenticationInterceptorMiddleware(app) {
+    authenticationInterceptor.connect(app);
+  },
+
   bodyParser(app) {
     const options = { limit: '1mb' };
     app.use(bodyParser.json(options));

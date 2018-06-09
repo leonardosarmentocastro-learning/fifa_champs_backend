@@ -10,7 +10,6 @@ const router = require('./router');
 class Webserver {
   constructor() {
     this.app = null;
-    this.database = database;
     this.router = router;
     this.server = null;
   }
@@ -30,6 +29,10 @@ class Webserver {
 
       console.info(message); // eslint-disable-line
     });
+  }
+
+  connectMiddlewares(app) {
+    configure.connectAuthenticationInterceptorMiddleware(app);
   }
 
   connectRoutes(app) {
@@ -90,12 +93,13 @@ class Webserver {
 
   async start() {
     // Run the database
-    await this.database.connect();
+    await database.connect();
 
     // Run the server
     this.app = express();
     this.server = http.createServer(this.app);
     this.setExpressMiddlewares(this.app);
+    this.connectMiddlewares(this.app);
     this.connectRoutes(this.app);
 
     return this.listen();
