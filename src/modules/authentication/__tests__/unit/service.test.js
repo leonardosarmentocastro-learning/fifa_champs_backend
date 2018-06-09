@@ -1,6 +1,12 @@
 const authenticationService = require('../../service');
 
 describe('[unit-test] authenticationService', () => {
+  let stubbedService = null;
+
+  beforeEach(() => {
+    stubbedService = { ...authenticationService };
+  });
+
   describe('[method] getTokenWithoutBearerKeyword', () => {
     describe('by receiving a token without the "Bearer" keyword', () => {
       const specs = {
@@ -30,14 +36,34 @@ describe('[unit-test] authenticationService', () => {
 
   describe('[method] isAnValidJwtToken', () => {
     describe('by receiving an invalid jwt token', () => {
-      it('it must return "false" boolean value', () => {
+      const specs = {
+        token: 'invalid.jwt.token',
+      };
 
+      beforeEach(() => {
+        stubbedService.jwt.verify = () => {
+          throw new Exception('Invalid token.');
+        };
+      });
+
+      it('it must return "false" boolean value', () => {
+        const isAnValidJwtToken = stubbedService.isAnValidJwtToken(specs.token);
+        expect(isAnValidJwtToken).toBeFalsy();
       });
     });
 
     describe('by receiving a valid jwt token', () => {
-      it('it must return "true" boolean value', () => {
+      const specs = {
+        token: 'valid.jwt.token',
+      };
 
+      beforeEach(() => {
+        stubbedService.jwt.verify = () => null;
+      });
+
+      it('it must return "true" boolean value', () => {
+        const isAnValidJwtToken = stubbedService.isAnValidJwtToken(specs.token);
+        expect(isAnValidJwtToken).toBeTruthy();
       });
     });
   });
