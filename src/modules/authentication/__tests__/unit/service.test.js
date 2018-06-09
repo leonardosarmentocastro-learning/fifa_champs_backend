@@ -47,8 +47,8 @@ describe('[unit-test] authenticationService', () => {
       });
 
       it('it must return "false" boolean value', () => {
-        const isAnValidJwtToken = stubbedService.isAnValidJwtToken(specs.token);
-        expect(isAnValidJwtToken).toBeFalsy();
+        expect(stubbedService.isAnValidJwtToken(specs.token))
+          .toBeFalsy();
       });
     });
 
@@ -62,8 +62,8 @@ describe('[unit-test] authenticationService', () => {
       });
 
       it('it must return "true" boolean value', () => {
-        const isAnValidJwtToken = stubbedService.isAnValidJwtToken(specs.token);
-        expect(isAnValidJwtToken).toBeTruthy();
+        expect(stubbedService.isAnValidJwtToken(specs.token))
+          .toBeTruthy();
       });
     });
   });
