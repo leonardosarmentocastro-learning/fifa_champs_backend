@@ -8,12 +8,16 @@ const functionalTestsHelper = {
   // Returns an "axios" instance which baseURL points to our API endpoint.
   API: (() => {
     const {
+      authentication,
       ip,
       port,
     } = APP_CONFIG;
 
     const instance = axios.create({
       baseURL: `http://${ip}:${port}`,
+      headers: {
+        'Authorization': authentication.token,
+      },
     });
     return instance;
   })(),
