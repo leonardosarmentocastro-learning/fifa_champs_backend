@@ -18,10 +18,8 @@ describe('[unit-test] authenticationInterceptor', () => {
       });
 
       it('it must return a "false" boolean', () => {
-        const isAccessingUsingAnValidEnvironmentToken =
-          authenticationInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token);
-
-        expect(isAccessingUsingAnValidEnvironmentToken).toBeFalsy();
+        expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
+          .toBeFalsy();
       });
     });
 
@@ -43,10 +41,8 @@ describe('[unit-test] authenticationInterceptor', () => {
         });
 
         it('it must return a "true" boolean', () => {
-          const isAccessingUsingAnValidEnvironmentToken =
-            authenticationInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token);
-
-          expect(isAccessingUsingAnValidEnvironmentToken).toBeTruthy();
+          expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
+            .toBeTruthy();
         });
       });
 
@@ -56,11 +52,28 @@ describe('[unit-test] authenticationInterceptor', () => {
         });
 
         it('it must return a "false" boolean', () => {
-          const isAccessingUsingAnValidEnvironmentToken =
-            authenticationInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token);
-
-          expect(isAccessingUsingAnValidEnvironmentToken).toBeFalsy();
+          expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
+            .toBeFalsy();
         });
+      });
+    });
+  });
+
+  describe('[method] isAccessingWhitelistedRoute', () => {
+    describe('the following routes must be bypassed:', () => {
+      it('(CORS verification) [OPTIONS] *', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('OPTIONS', ''))
+          .toBeTruthy();
+      });
+
+      it('[POST] /users/sign_in', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/users/sign_in'))
+          .toBeTruthy();
+      });
+
+      it('[POST] /users/sign_up', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/users/sign_up'))
+          .toBeTruthy();
       });
     });
   });

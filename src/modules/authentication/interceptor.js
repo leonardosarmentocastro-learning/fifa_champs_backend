@@ -3,8 +3,8 @@ const authenticationService = require('../../modules/authentication/service');
 
 const authenticationInterceptor = {
   // Injecting dependencies / properties
-  get APP_CONFIG() { return APP_CONFIG; },
-  get authenticationService() { return authenticationService; },
+  get APP_CONFIG() { return { ...APP_CONFIG }; },
+  get authenticationService() { return { ...authenticationService }; },
   get ERRORS() {
     return {
       AUTHORIZATION_TOKEN_IS_INVALID: {

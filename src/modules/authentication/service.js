@@ -4,8 +4,8 @@ const { APP_CONFIG } = require('../../internals/configs');
 
 const authenticationService = {
   // Injecting dependencies
-  get APP_CONFIG() { return APP_CONFIG; },
-  get jwt() { return jwt; },
+  get APP_CONFIG() { return { ...APP_CONFIG }; },
+  get jwt() { return { ...jwt }; },
 
   // Implementations
   getTokenWithoutBearerKeyword(token) {
