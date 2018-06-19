@@ -2,7 +2,7 @@ const {
   API,
   closeWebserver,
   startWebserver,
-} = require('../../../../helpers/functional-tests.helper');
+} = require('../../../../helpers/functional-tests-helper');
 
 beforeAll(() => startWebserver());
 

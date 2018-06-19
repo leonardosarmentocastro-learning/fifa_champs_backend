@@ -1,3 +1,5 @@
+const { isEmpty } = require('lodash/lang');
+
 const usersValidator = {
   get ERRORS() {
     return {
@@ -12,6 +14,10 @@ const usersValidator = {
       PASSWORD_IS_NOT_STRONG_ENOUGH: {
         code: 'PASSWORD_IS_NOT_STRONG_ENOUGH',
         message: 'The provided "password" is not strong enough.',
+      },
+      USER_WITH_GIVEN_DISPLAY_NAME_ALREADY_EXISTS: {
+        code: 'USER_WITH_GIVEN_DISPLAY_NAME_ALREADY_EXISTS',
+        message: 'An user with the given "slack.displayName" already exists.',
       },
       USER_IS_EMPTY: {
         code: 'USER_IS_EMPTY',
@@ -31,8 +37,7 @@ const usersValidator = {
   },
 
   validateForSignUp(user) {
-    const isEmpty = Boolean(user);
-    if (isEmpty) {
+    if (isEmpty(user)) {
       const error = this.ERRORS.USER_IS_EMPTY;
       return error;
     }
@@ -54,7 +59,7 @@ const usersValidator = {
       return error;
     }
 
-    const isPasswordStrongEnough = password.test(this.regex.forValidatingPasswordStrength);
+    const isPasswordStrongEnough = this.regex.forValidatingPasswordStrength.test(password);
     if (!isPasswordStrongEnough) {
       const error = this.ERRORS.PASSWORD_IS_NOT_STRONG_ENOUGH;
       return error;

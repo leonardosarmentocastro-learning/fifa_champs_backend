@@ -1,11 +1,44 @@
 const usersModel = require('./model');
+const usersValidator = require('./validator');
 
 const usersService = {
   // Dependency injection
-  get usersModel() { return { ...usersModel }; },
+  get usersModel() { return usersModel },
+  get usersValidator() { return { ...usersValidator }; },
 
-  signUp() {
+  async findOneUserBy(query) {
+    try {
+      const foundUser = await this.usersModel.findOne(query);
+      return foundUser;
+    } catch(err) {
+      throw err;
+    }
+  },
 
+  async signUp(user) {
+    const error = this.usersValidator.validateForSignUp(user);
+    const hasErrors = Boolean(error);
+    if (hasErrors) {
+      return Promise.reject(error);
+    }
+
+    const { displayName } = user.slack;
+    const query = {
+      slack: { displayName },
+    };
+    const foundUser = await this.findOneUserBy(query);
+    const doesUserWithGivenDisplayNameAlreadyExists = Boolean(foundUser);
+    if (doesUserWithGivenDisplayNameAlreadyExists) {
+      const error = this.usersValidator.ERRORS.USER_WITH_GIVEN_DISPLAY_NAME_ALREADY_EXISTS;
+      throw error;
+    }
+
+    // TODO: encrypt password
+    // Fix "password":
+    // It is not saving it as a "privateFields.password".
+    const documentUser = new this.usersModel(user);
+    const savedUser = await documentUser.save();
+    return savedUser;
   },
 };
 

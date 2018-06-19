@@ -4,6 +4,10 @@ const http = require('http');
 
 const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
 const configureShared = require('../modules/shared/configure');
+// Necessary to configure shared singletons before all other dependencies get required because:
+// If they ocasionally use the singletons that are being mutated by this configuration,
+// they will not take the given changes into consideration.
+configureShared.singletons();
 const configureWebserver = require('./configure');
 const database = require('../database');
 const router = require('./router');
@@ -30,10 +34,6 @@ class Webserver {
 
       console.info(message); // eslint-disable-line
     });
-  }
-
-  configureApplicationSharedSettings() {
-    configureShared.datetimeLibrarySettings();
   }
 
   connectApplicationMiddlewares(app) {
@@ -97,8 +97,6 @@ class Webserver {
   }
 
   async start() {
-    this.configureApplicationSharedSettings();
-
     // Run the database
     await database.connect();
 
