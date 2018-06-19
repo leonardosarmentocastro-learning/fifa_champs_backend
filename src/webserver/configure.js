@@ -4,18 +4,18 @@ const cors = require('cors');
 const errorhandler = require('errorhandler');
 const morgan = require('morgan');
 
-const { APP_CONFIG } = require('./../internals/configs');
+const ENVIRONMENT_VARIABLES = require('./../internals/environment-variables');
 const authenticationInterceptor = require('../modules/authentication/interceptor');
 
-const configure = {
-  connectAuthenticationInterceptorMiddleware(app) {
-    authenticationInterceptor.connect(app);
-  },
-
+const configureWebserver = {
   bodyParser(app) {
     const options = { limit: '1mb' };
     app.use(bodyParser.json(options));
     app.use(bodyParser.urlencoded({ extended: false }));
+  },
+
+  connectAuthenticationInterceptorMiddleware(app) {
+    authenticationInterceptor.connect(app);
   },
 
   // Since frontend applications may be able to read the "Authorization" token and send
@@ -42,14 +42,14 @@ const configure = {
   },
 
   logErrorsOnConsoleDependingOnEnviroment(app) {
-    const { IS_DEVELOPMENT_ENVIRONMENT, IS_TEST_ENVIRONMENT } = APP_CONFIG;
+    const { IS_DEVELOPMENT_ENVIRONMENT, IS_TEST_ENVIRONMENT } = ENVIRONMENT_VARIABLES;
     if (IS_DEVELOPMENT_ENVIRONMENT || IS_TEST_ENVIRONMENT) {
       app.use(errorhandler());
     }
   },
 
   logRequestsOnConsoleDependingOnEnvironment(app) {
-    const { IS_DEVELOPMENT_ENVIRONMENT } = APP_CONFIG;
+    const { IS_DEVELOPMENT_ENVIRONMENT } = ENVIRONMENT_VARIABLES;
 
     if (IS_DEVELOPMENT_ENVIRONMENT) {
       const logFormat = 'dev';
@@ -62,4 +62,4 @@ const configure = {
   },
 };
 
-module.exports = configure;
+module.exports = configureWebserver;

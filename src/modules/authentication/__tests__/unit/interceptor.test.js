@@ -14,7 +14,7 @@ describe('[unit-test] authenticationInterceptor', () => {
       };
 
       beforeEach(() => {
-        stubbedInterceptor.APP_CONFIG.IS_PRODUCTION_ENVIRONMENT = true;
+        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_PRODUCTION_ENVIRONMENT = true;
       });
 
       it('it must return a "false" boolean', () => {
@@ -30,14 +30,14 @@ describe('[unit-test] authenticationInterceptor', () => {
       };
 
       beforeEach(() => {
-        stubbedInterceptor.APP_CONFIG.IS_DEVELOPMENT_ENVIRONMENT = true;
-        stubbedInterceptor.APP_CONFIG.IS_TEST_ENVIRONMENT = true;
-        stubbedInterceptor.APP_CONFIG.IS_PRODUCTION_ENVIRONMENT = false;
+        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_DEVELOPMENT_ENVIRONMENT = true;
+        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_TEST_ENVIRONMENT = true;
+        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_PRODUCTION_ENVIRONMENT = false;
       });
 
       describe('and the provided "token" matches the "environment token"', () => {
         beforeEach(() => {
-          stubbedInterceptor.APP_CONFIG.authentication.token = specs.token;
+          stubbedInterceptor.ENVIRONMENT_VARIABLES.authentication.token = specs.token;
         });
 
         it('it must return a "true" boolean', () => {
@@ -48,7 +48,7 @@ describe('[unit-test] authenticationInterceptor', () => {
 
       describe('and the provided "token" does not match the "environment token"', () => {
         beforeEach(() => {
-          stubbedInterceptor.APP_CONFIG.authentication.token = specs.notEnvironmentToken;
+          stubbedInterceptor.ENVIRONMENT_VARIABLES.authentication.token = specs.notEnvironmentToken;
         });
 
         it('it must return a "false" boolean', () => {

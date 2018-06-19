@@ -10,11 +10,12 @@ describe('[unit-test] authenticationService', () => {
   describe('[method] getTokenWithoutBearerKeyword', () => {
     describe('by receiving a token without the "Bearer" keyword', () => {
       const specs = {
-        tokenWithoutBearerKeyword: '123456.789.abc'
+        tokenWithoutBearerKeyword: '123456.789.abc',
       };
 
       it('it must return the token value\'s unchanged', () => {
-        const token = authenticationService.getTokenWithoutBearerKeyword(specs.tokenWithoutBearerKeyword);
+        const token = authenticationService
+          .getTokenWithoutBearerKeyword(specs.tokenWithoutBearerKeyword);
         expect(token).toBe(specs.tokenWithoutBearerKeyword);
       });
     });
@@ -27,7 +28,8 @@ describe('[unit-test] authenticationService', () => {
         };
 
         it('it must return the string after the "Bearer" keyword', () => {
-          const token = authenticationService.getTokenWithoutBearerKeyword(specs.tokenWithBearerKeyword);
+          const token = authenticationService
+            .getTokenWithoutBearerKeyword(specs.tokenWithBearerKeyword);
           expect(token).toBe(specs.tokenWithoutBearerKeyword);
         });
       });

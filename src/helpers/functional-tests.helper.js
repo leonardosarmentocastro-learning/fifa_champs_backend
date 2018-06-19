@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const { APP_CONFIG } = require('../internals/configs');
+const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
 const Webserver = require('../webserver');
 
 const webserver = new Webserver();
@@ -11,12 +11,12 @@ const functionalTestsHelper = {
       authentication,
       ip,
       port,
-    } = APP_CONFIG;
+    } = ENVIRONMENT_VARIABLES;
 
     const instance = axios.create({
       baseURL: `http://${ip}:${port}`,
       headers: {
-        'Authorization': authentication.token,
+        Authorization: authentication.token,
       },
     });
     return instance;

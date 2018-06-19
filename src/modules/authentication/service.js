@@ -1,13 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-const { APP_CONFIG } = require('../../internals/configs');
+const ENVIRONMENT_VARIABLES = require('../../internals/environment-variables');
 
 const authenticationService = {
   // Injecting dependencies
-  get APP_CONFIG() { return { ...APP_CONFIG }; },
+  get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
   get jwt() { return { ...jwt }; },
 
-  // Implementations
   getTokenWithoutBearerKeyword(token) {
     const keyword = 'Bearer';
     const doesTokenHasBearerKeyword = (token.indexOf(keyword) !== -1);
@@ -27,7 +26,7 @@ const authenticationService = {
     const tokenWithoutBearerKeyword = this.getTokenWithoutBearerKeyword(token);
 
     try {
-      const { authentication } = this.APP_CONFIG;
+      const { authentication } = this.ENVIRONMENT_VARIABLES;
       this.jwt.verify(tokenWithoutBearerKeyword, authentication.secret);
 
       return isAnValidJwtToken;

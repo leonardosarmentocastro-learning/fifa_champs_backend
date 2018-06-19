@@ -1,7 +1,6 @@
-require('dotenv').config(); // Reads the ".env" file at the root of the project.
-const getenv = require('getenv');
+require('dotenv').config(); // Reads the ".env" file at the root of the project and set into "process.env"
+const getenv = require('getenv'); // Helper to get and typecast environment variables
 
-// ENVIRONMENT VARIABLES
 // Fallback values.
 const DEFAULT = {
   authentication: {
@@ -66,7 +65,7 @@ const IS_DEVELOPMENT_ENVIRONMENT = (environment === 'development');
 const IS_TEST_ENVIRONMENT = (environment === 'test');
 const IS_PRODUCTION_ENVIRONMENT = !(IS_DEVELOPMENT_ENVIRONMENT || IS_TEST_ENVIRONMENT);
 
-const APP_CONFIG = {
+const ENVIRONMENT_VARIABLES = {
   authentication,
   environment,
   giphy,
@@ -77,4 +76,4 @@ const APP_CONFIG = {
   mongodb,
   port,
 };
-module.exports = APP_CONFIG;
+module.exports = ENVIRONMENT_VARIABLES;

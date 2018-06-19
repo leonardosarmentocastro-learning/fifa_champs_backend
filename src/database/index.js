@@ -1,11 +1,11 @@
 const chalk = require('chalk');
 const mongoose = require('mongoose');
 
-const { APP_CONFIG } = require('../internals/configs');
+const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
 
 const database = {
   async connect() {
-    const { mongodb } = APP_CONFIG;
+    const { mongodb } = ENVIRONMENT_VARIABLES;
 
     try {
       const connection = await mongoose.connect(mongodb.uri);
@@ -17,7 +17,7 @@ const database = {
   },
 
   getConnectionErrorMessage(err) {
-    const { mongodb } = APP_CONFIG;
+    const { mongodb } = ENVIRONMENT_VARIABLES;
 
     const stacktrace = chalk.grey(`
       #####################

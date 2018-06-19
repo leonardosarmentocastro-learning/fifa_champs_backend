@@ -1,9 +1,9 @@
-const { APP_CONFIG } = require('../../internals/configs');
+const ENVIRONMENT_VARIABLES = require('../../internals/environment-variables');
 const authenticationService = require('../../modules/authentication/service');
 
 const authenticationInterceptor = {
-  // Injecting dependencies / properties
-  get APP_CONFIG() { return { ...APP_CONFIG }; },
+  // Injecting dependencies / properties
+  get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
   get authenticationService() { return { ...authenticationService }; },
   get ERRORS() {
     return {
@@ -18,7 +18,6 @@ const authenticationInterceptor = {
     };
   },
 
-  // Implementations
   connect(app) {
     // We bind "this" because otherwise it will refer to "express.js" context.
     app.use(this.middleware.bind(this));
@@ -28,12 +27,12 @@ const authenticationInterceptor = {
     const isAccessingUsingAnValidEnvironmentToken = true;
 
     // Environment tokens are not allowed in production mode.
-    const { IS_PRODUCTION_ENVIRONMENT } = this.APP_CONFIG;
+    const { IS_PRODUCTION_ENVIRONMENT } = this.ENVIRONMENT_VARIABLES;
     if (IS_PRODUCTION_ENVIRONMENT) {
       return !isAccessingUsingAnValidEnvironmentToken;
     }
 
-    const { authentication: environment } = this.APP_CONFIG;
+    const { authentication: environment } = this.ENVIRONMENT_VARIABLES;
     if (token === environment.token) {
       return isAccessingUsingAnValidEnvironmentToken;
     }

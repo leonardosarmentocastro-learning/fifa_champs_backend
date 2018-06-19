@@ -5,8 +5,10 @@
     "beforeAll": true,
     "beforeEach": true,
     "describe": true,
+    "Exception": true,
     "expect": true,
-    "it": true
+    "it": true,
+    "jest": true
   },
   "rules": {
     "class-methods-use-this": "off"

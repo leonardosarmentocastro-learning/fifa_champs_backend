@@ -2,8 +2,9 @@ const chalk = require('chalk');
 const express = require('express');
 const http = require('http');
 
-const { APP_CONFIG } = require('../internals/configs');
-const configure = require('./configure');
+const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
+const configureShared = require('../modules/shared/configure');
+const configureWebserver = require('./configure');
 const database = require('../database');
 const router = require('./router');
 
@@ -31,8 +32,12 @@ class Webserver {
     });
   }
 
-  connectMiddlewares(app) {
-    configure.connectAuthenticationInterceptorMiddleware(app);
+  configureApplicationSharedSettings() {
+    configureShared.datetimeLibrarySettings();
+  }
+
+  connectApplicationMiddlewares(app) {
+    configureWebserver.connectAuthenticationInterceptorMiddleware(app);
   }
 
   connectRoutes(app) {
@@ -82,24 +87,26 @@ class Webserver {
     return message;
   }
 
-  setExpressMiddlewares(app) {
-    configure.bodyParser(app);
-    configure.prettifyJsonOutput(app);
-    configure.requestCompression(app);
-    configure.logErrorsOnConsoleDependingOnEnviroment(app);
-    configure.logRequestsOnConsoleDependingOnEnvironment(app);
-    configure.corsWithAuthorizationHeaderEnabled(app);
+  connectExpressMiddlewares(app) {
+    configureWebserver.bodyParser(app);
+    configureWebserver.prettifyJsonOutput(app);
+    configureWebserver.requestCompression(app);
+    configureWebserver.logErrorsOnConsoleDependingOnEnviroment(app);
+    configureWebserver.logRequestsOnConsoleDependingOnEnvironment(app);
+    configureWebserver.corsWithAuthorizationHeaderEnabled(app);
   }
 
   async start() {
+    this.configureApplicationSharedSettings();
+
     // Run the database
     await database.connect();
 
     // Run the server
     this.app = express();
     this.server = http.createServer(this.app);
-    this.setExpressMiddlewares(this.app);
-    this.connectMiddlewares(this.app);
+    this.connectExpressMiddlewares(this.app);
+    this.connectApplicationMiddlewares(this.app);
     this.connectRoutes(this.app);
 
     return this.listen();
@@ -110,7 +117,7 @@ class Webserver {
       environment,
       ip,
       port,
-    } = APP_CONFIG;
+    } = ENVIRONMENT_VARIABLES;
 
     return new Promise((resolve, reject) => {
       const callback = {
