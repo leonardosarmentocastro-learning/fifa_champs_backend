@@ -9,8 +9,7 @@ const authenticationInterceptor = require('../modules/authentication/interceptor
 
 const configureWebserver = {
   bodyParser(app) {
-    const options = { limit: '1mb' };
-    app.use(bodyParser.json(options));
+    app.use(bodyParser.json({ limit: '1mb' }));
     app.use(bodyParser.urlencoded({ extended: false }));
   },
 

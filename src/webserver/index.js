@@ -40,23 +40,17 @@ class Webserver {
     configureWebserver.connectAuthenticationInterceptorMiddleware(app);
   }
 
-  connectRoutes(app) {
-    this.router.connect(app);
+  connectExpressMiddlewares(app) {
+    configureWebserver.bodyParser(app);
+    configureWebserver.prettifyJsonOutput(app);
+    configureWebserver.requestCompression(app);
+    configureWebserver.logErrorsOnConsoleDependingOnEnviroment(app);
+    configureWebserver.logRequestsOnConsoleDependingOnEnvironment(app);
+    configureWebserver.corsWithAuthorizationHeaderEnabled(app);
   }
 
-  getServerSuccessfullyStartedMessage(options) {
-    const { port, environment } = options;
-
-    const message = chalk.green(`
-      ######################################
-      ### Server successfully started!  ###
-      ######################################
-
-      Server listening
-      on port ${chalk.yellow(port)}
-      in ${chalk.yellow(environment)} mode.
-    `);
-    return message;
+  connectRoutes(app) {
+    this.router.connect(app);
   }
 
   getErrorOnStartingServerMessage(err, options) {
@@ -87,27 +81,19 @@ class Webserver {
     return message;
   }
 
-  connectExpressMiddlewares(app) {
-    configureWebserver.bodyParser(app);
-    configureWebserver.prettifyJsonOutput(app);
-    configureWebserver.requestCompression(app);
-    configureWebserver.logErrorsOnConsoleDependingOnEnviroment(app);
-    configureWebserver.logRequestsOnConsoleDependingOnEnvironment(app);
-    configureWebserver.corsWithAuthorizationHeaderEnabled(app);
-  }
+  getServerSuccessfullyStartedMessage(options) {
+    const { port, environment } = options;
 
-  async start() {
-    // Run the database
-    await database.connect();
+    const message = chalk.green(`
+      ######################################
+      ### Server successfully started!  ###
+      ######################################
 
-    // Run the server
-    this.app = express();
-    this.server = http.createServer(this.app);
-    this.connectExpressMiddlewares(this.app);
-    this.connectApplicationMiddlewares(this.app);
-    this.connectRoutes(this.app);
-
-    return this.listen();
+      Server listening
+      on port ${chalk.yellow(port)}
+      in ${chalk.yellow(environment)} mode.
+    `);
+    return message;
   }
 
   async listen() {
@@ -143,6 +129,20 @@ class Webserver {
       // If the server failed to start, a callback will be fired to tell us that.
       this.server.on('error', callback.whenServerFailedToStart);
     });
+  }
+
+  async start() {
+    // Run the database
+    await database.connect();
+
+    // Run the server
+    this.app = express();
+    this.server = http.createServer(this.app);
+    this.connectExpressMiddlewares(this.app);
+    this.connectApplicationMiddlewares(this.app);
+    this.connectRoutes(this.app);
+
+    return this.listen();
   }
 }
 

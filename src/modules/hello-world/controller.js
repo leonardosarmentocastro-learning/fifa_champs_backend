@@ -1,7 +1,7 @@
-const controller = {
+const helloWorldController = {
   getHelloWorld(req, res) {
     return res.json({ message: 'Hello world' });
   },
 };
 
-module.exports = controller;
+module.exports = helloWorldController;

@@ -1,10 +1,10 @@
-const controller = require('./controller');
+const helloWorldController = require('./controller');
 
-const router = {
+const helloWorldRouter = {
   connect(app) {
     app.route('/hello-world')
-      .get(controller.getHelloWorld);
+      .get(helloWorldController.getHelloWorld);
   },
 };
 
-module.exports = router;
+module.exports = helloWorldRouter;

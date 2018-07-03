@@ -15,9 +15,8 @@ afterAll(async () => {
   await closeWebserver();
 });
 
-describe('[POST] /users/sign-up', () => {
-  const ENDPOINT = '/users/sign-up';
-
+const ENDPOINT = '/users/sign-up';
+describe(`[POST] ${ENDPOINT}`, () => {
   describe('must return on response\'s body an "error" object when receiving', () => {
     it('an empty "user"', () => {
       const user = {};

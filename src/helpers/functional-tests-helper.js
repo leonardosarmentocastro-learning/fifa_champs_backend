@@ -19,6 +19,10 @@ const functionalTestsHelper = {
         Authorization: authentication.token,
       },
     });
+
+    // Intercept all API calls during tests so API documentation can be generated automatically.
+    // TODO.
+
     return instance;
   })(),
   closeWebserver() {
