@@ -1,3 +1,4 @@
+const axiosApiDocGenerator = require('axios-api-doc-generator');
 const {
   API,
   closeWebserver,
@@ -6,14 +7,18 @@ const {
 
 beforeAll(() => startWebserver());
 
-afterAll(() => closeWebserver());
+afterAll(async () => {
+  await axiosApiDocGenerator.createApiDocsForTests();
+  return closeWebserver();
+});
 
-describe('[GET] /hello-world', () => {
+const ENDPOINT = `/api/hello-world`;
+describe(`[GET] ${ENDPOINT}`, () => {
   describe('it must return on its "body"', () => {
     let body = null;
 
     beforeEach(async () => {
-      const response = await API.get('/hello-world');
+      const response = await API.get(ENDPOINT);
       body = response.data;
     });
 

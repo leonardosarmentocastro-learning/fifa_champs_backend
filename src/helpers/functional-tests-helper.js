@@ -1,4 +1,5 @@
 const axios = require('axios');
+const axiosApiDocGenerator = require('axios-api-doc-generator');
 
 const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
 const Webserver = require('../webserver');
@@ -21,7 +22,11 @@ const functionalTestsHelper = {
     });
 
     // Intercept all API calls during tests so API documentation can be generated automatically.
-    // TODO.
+    instance.interceptors.request.use(axiosApiDocGenerator.requestInterceptor.onSuccess);
+    instance.interceptors.response.use(
+      axiosApiDocGenerator.responseInterceptor.onSuccess,
+      axiosApiDocGenerator.responseInterceptor.onError
+    );
 
     return instance;
   })(),

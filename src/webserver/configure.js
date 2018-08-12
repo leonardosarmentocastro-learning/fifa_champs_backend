@@ -1,3 +1,4 @@
+const axiosApiDocGenerator = require('axios-api-doc-generator');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
@@ -15,6 +16,13 @@ const configureWebserver = {
 
   connectAuthenticationInterceptorMiddleware(app) {
     authenticationInterceptor.connect(app);
+  },
+
+  connectStaticFileServingMiddlewareForApiDocs(app) {
+    const { IS_PRODUCTION_ENVIRONMENT } = ENVIRONMENT_VARIABLES;
+    if (!IS_PRODUCTION_ENVIRONMENT) {
+      axiosApiDocGenerator.connectStaticFilesServirgMiddleware(app);
+    }
   },
 
   // Since frontend applications may be able to read the "Authorization" token and send

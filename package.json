@@ -11,7 +11,7 @@
     "start:development": "npm run prestart && nodemon ./index.js",
     "lint": "eslint src/ --fix",
     "pretest": "npm run create:environment-variables:file:for-test",
-    "test": "jest --runInBand",
+    "test": "jest --forceExit --runInBand --config=./config/jest/jest.config.js",
     "test:watch": "npm run test -- --watch"
   },
   "author": "",
@@ -34,6 +34,7 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
+    "axios-api-doc-generator": "../axios-api-doc-generator",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "jest": "^22.4.4",

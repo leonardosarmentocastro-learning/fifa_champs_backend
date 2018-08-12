@@ -1,3 +1,4 @@
+const axiosApiDocGenerator = require('axios-api-doc-generator');
 const chalk = require('chalk');
 const express = require('express');
 const http = require('http');
@@ -39,6 +40,7 @@ class Webserver {
   }
 
   connectApplicationMiddlewares(app) {
+    configureWebserver.connectStaticFileServingMiddlewareForApiDocs(app);
     configureWebserver.connectAuthenticationInterceptorMiddleware(app);
   }
 

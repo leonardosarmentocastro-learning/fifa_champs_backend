@@ -1,3 +1,5 @@
+const axiosApiDocGenerator = require('axios-api-doc-generator');
+
 const {
   API,
   closeWebserver,
@@ -11,9 +13,12 @@ beforeAll(async () => {
   return await removeAllUsersFromDatabase();
 });
 
-afterAll( () => closeWebserver());
+afterAll(async () => {
+  await axiosApiDocGenerator.createApiDocsForTests();
+  return closeWebserver()
+});
 
-const ENDPOINT = '/users/sign-up';
+const ENDPOINT = '/api/users/sign-up';
 describe(`[POST] ${ENDPOINT}`, () => {
   describe('must return on response\'s body an "error" object when receiving', () => {
     it('an empty "user"', () => {

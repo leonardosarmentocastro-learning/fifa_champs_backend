@@ -6,18 +6,18 @@ const Webserver = require('./src/webserver');
     const webserver = new Webserver();
     await webserver.start();
 
-    const model = require('./src/modules/users/model');
-    await model.remove();
+    // const model = require('./src/modules/users/model');
+    // await model.remove();
 
-    const user = new model({
-      slack: {
-        displayName: '@gil'
-      },
-    });
-    await user.save();
+    // const user = new model({
+    //   slack: {
+    //     displayName: '@gil'
+    //   },
+    // });
+    // await user.save();
 
-    const users = await model.find();
-    console.log('### users', JSON.stringify(users, null, 2));
+    // const users = await model.find();
+    // console.log('### users', JSON.stringify(users, null, 2));
 
     } catch(error) {
       console.error(error);
