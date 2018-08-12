@@ -20,19 +20,21 @@ class Webserver {
   }
 
   close() {
-    const isServerRunning = this.server.listening;
-    if (!isServerRunning) {
-      return;
-    }
+    return new Promise(resolve => {
+      const isServerRunning = this.server.listening;
+      if (!isServerRunning) {
+        return resolve();
+      }
 
-    this.server.close(() => {
-      const message = chalk.green(`
-        ######################################
-        ###   Server closed successfully!  ###
-        ######################################
-      `);
+      this.server.close(() => {
+        const message = chalk.green(`
+          ######################################
+          ###   Server closed successfully!  ###
+          ######################################
+        `);
 
-      console.info(message); // eslint-disable-line
+        return resolve(console.info(message)); // eslint-disable-line
+      });
     });
   }
 

@@ -11,9 +11,7 @@ beforeAll(async () => {
   return await removeAllUsersFromDatabase();
 });
 
-afterAll(async () => {
-  await closeWebserver();
-});
+afterAll( () => closeWebserver());
 
 const ENDPOINT = '/users/sign-up';
 describe(`[POST] ${ENDPOINT}`, () => {
