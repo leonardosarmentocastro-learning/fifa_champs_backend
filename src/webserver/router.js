@@ -1,9 +1,9 @@
-const helloWorldRouter = require('./../modules/hello-world/router');
+const healthRouter = require('./../modules/health/router');
 const usersRouter = require('./../modules/users/router');
 
 const router = {
   connect(app) {
-    helloWorldRouter.connect(app);
+    healthRouter.connect(app);
     usersRouter.connect(app);
   },
 };

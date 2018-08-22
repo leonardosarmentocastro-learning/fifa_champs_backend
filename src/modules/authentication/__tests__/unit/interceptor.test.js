@@ -66,13 +66,18 @@ describe('[unit-test] authenticationInterceptor', () => {
           .toBeTruthy();
       });
 
+      it('[GET] /api/health', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('GET', '/api/health'))
+          .toBeTruthy();
+      });
+
       it('[POST] /users/sign_in', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/users/sign_in'))
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign_in'))
           .toBeTruthy();
       });
 
       it('[POST] /users/sign_up', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/users/sign_up'))
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign_up'))
           .toBeTruthy();
       });
     });

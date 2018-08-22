@@ -42,11 +42,13 @@ const authenticationInterceptor = {
 
   isAccessingWhitelistedRoute(method, url) {
     const isCorsVerification = (method === 'OPTIONS');
-    const isSigningInUsers = (method === 'POST' && url === '/users/sign_in');
-    const isSigningUpUsers = (method === 'POST' && url === '/users/sign_up');
+    const isCheckingServerHealthiness = (method === 'GET' && url === '/api/health');
+    const isSigningInUsers = (method === 'POST' && url === '/api/users/sign_in');
+    const isSigningUpUsers = (method === 'POST' && url === '/api/users/sign_up');
 
     const isAccessingWhitelistedRoute = (
       isCorsVerification ||
+      isCheckingServerHealthiness ||
       isSigningInUsers ||
       isSigningUpUsers
     );
