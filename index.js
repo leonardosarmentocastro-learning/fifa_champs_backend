@@ -5,18 +5,34 @@ const { Webserver } = require('./src/webserver');
   try {
     new Webserver().start();
 
-    // const model = require('./src/modules/users/model');
-    // await model.remove();
+    const { authenticationService } = require('./src/modules/authentication');
+    const { usersService } = require('./src/modules/users');
+    const model = require('./src/modules/users/model');
+    await model.remove();
 
     // const user = new model({
     //   slack: {
     //     displayName: '@gil'
     //   },
+    //   privateFields: {
+    //     password: 'abc'
+    //   }
     // });
     // await user.save();
+    const user = {
+      slack: {
+        displayName: '@leonardo.caxumba'
+      },
+      password: '1q2w#E$R'
+    };
+    const savedUser = await usersService.signUp(user);
 
-    // const users = await model.find();
-    // console.log('### users', JSON.stringify(users, null, 2));
+    const users = await model.find();
+    const encryptedValue = savedUser.privateFields.password;
+    const unencryptedValue = user.password;
+    const doesEncryptedAndUnencryptedValuesMatch = await authenticationService.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue);
+    console.log('#### doesEncryptedAndUnencryptedValuesMatch', doesEncryptedAndUnencryptedValuesMatch); // TODO: FIX IT
+    console.log('### users', JSON.stringify(users, null, 2));
 
     } catch(error) {
       console.error(error);

@@ -1,11 +1,32 @@
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const ENVIRONMENT_VARIABLES = require('../../internals/environment-variables');
+const { ENVIRONMENT_VARIABLES } = require('../../internals');
+const authenticationValidator = require('./validator');
 
 const authenticationService = {
   // Injecting dependencies
+  get authenticationValidator() { return { ...authenticationValidator }; },
+  get bcrypt() { return { ...bcrypt }; },
   get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
   get jwt() { return { ...jwt }; },
+
+  // TODO: add tests
+  async doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue) {
+    return await this.bcrypt.compare(unencryptedValue, encryptedValue);
+  },
+
+  // TODO: add tests
+  async encryptPassword(password) {
+    const salt = 10;
+    const encryptPassword = await this.bcrypt.hash(password, salt)
+      .catch(err => {
+        const error = this.authenticationValidator.ERRORS.CANT_ENCRYPT_PASSWORD;
+        throw error;
+      });
+
+    return encryptPassword;
+  },
 
   getTokenWithoutBearerKeyword(token) {
     const keyword = 'Bearer';
