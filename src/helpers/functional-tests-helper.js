@@ -1,8 +1,8 @@
 const axios = require('axios');
 const axiosApiDocGenerator = require('axios-api-doc-generator');
 
-const ENVIRONMENT_VARIABLES = require('../internals/environment-variables');
-const Webserver = require('../webserver');
+const { ENVIRONMENT_VARIABLES } = require('../internals');
+const { Webserver } = require('../webserver');
 
 const webserver = new Webserver();
 const functionalTestsHelper = {

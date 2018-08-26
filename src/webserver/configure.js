@@ -5,8 +5,8 @@ const cors = require('cors');
 const errorhandler = require('errorhandler');
 const morgan = require('morgan');
 
-const ENVIRONMENT_VARIABLES = require('./../internals/environment-variables');
-const authenticationInterceptor = require('../modules/authentication/interceptor');
+const { ENVIRONMENT_VARIABLES } = require('./../internals');
+const { authenticationInterceptor } = require('../modules/authentication');
 
 const configureWebserver = {
   bodyParser(app) {

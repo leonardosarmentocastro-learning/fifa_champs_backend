@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const sharedSchema = require('../shared/schema');
+const { sharedSchema } = require('../shared');
 
 const usersSchema = new Schema({
   // # S

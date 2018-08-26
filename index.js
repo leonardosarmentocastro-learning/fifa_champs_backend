@@ -1,10 +1,9 @@
 const SHARED_CONSTANTS = require('./src/modules/shared/constants');
-const Webserver = require('./src/webserver');
+const { Webserver } = require('./src/webserver');
 
 (async () => {
   try {
-    const webserver = new Webserver();
-    await webserver.start();
+    new Webserver().start();
 
     // const model = require('./src/modules/users/model');
     // await model.remove();
