@@ -15,7 +15,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await axiosApiDocGenerator.createApiDocsForTests();
-  return closeWebserver()
+  return closeWebserver();
 });
 
 const ENDPOINT = '/api/users/sign-up';
