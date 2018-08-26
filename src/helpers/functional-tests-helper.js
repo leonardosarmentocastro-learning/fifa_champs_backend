@@ -1,5 +1,4 @@
-const axios = require('axios');
-const axiosApiDocGenerator = require('axios-api-doc-generator');
+const { createAxiosInstance } = require('axios-api-doc-generator');
 
 const { ENVIRONMENT_VARIABLES } = require('../internals');
 const { Webserver } = require('../webserver');
@@ -7,29 +6,25 @@ const { Webserver } = require('../webserver');
 const webserver = new Webserver();
 const functionalTestsHelper = {
   // Returns an "axios" instance which baseURL points to our API endpoint.
-  API: (() => {
-    const {
-      authentication,
-      ip,
-      port,
-    } = ENVIRONMENT_VARIABLES;
+  API: {
+    withAuthentication: (() => {
+      const { authentication, ip, port } = ENVIRONMENT_VARIABLES;
+      const instance = createAxiosInstance({
+        baseURL: `http://${ip}:${port}`,
+        headers: {
+          Authorization: authentication.token,
+        },
+      });
 
-    const instance = axios.create({
-      baseURL: `http://${ip}:${port}`,
-      headers: {
-        Authorization: authentication.token,
-      },
-    });
+      return instance;
+    })(),
+    withoutAuthentication: (() => {
+      const { ip, port } = ENVIRONMENT_VARIABLES;
+      const instance = createAxiosInstance({ baseURL: `http://${ip}:${port}` });
 
-    // Intercept all API calls during tests so API documentation can be generated automatically.
-    instance.interceptors.request.use(axiosApiDocGenerator.requestInterceptor.onSuccess);
-    instance.interceptors.response.use(
-      axiosApiDocGenerator.responseInterceptor.onSuccess,
-      axiosApiDocGenerator.responseInterceptor.onError
-    );
-
-    return instance;
-  })(),
+      return instance;
+    })(),
+  },
   closeWebserver() {
     return webserver.close();
   },

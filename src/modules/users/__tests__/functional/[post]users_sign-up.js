@@ -1,7 +1,7 @@
 const axiosApiDocGenerator = require('axios-api-doc-generator');
 
 const {
-  API,
+  API: { withAuthentication: API },
   closeWebserver,
   startWebserver,
 } = require('../../../../helpers/functional-tests-helper');
