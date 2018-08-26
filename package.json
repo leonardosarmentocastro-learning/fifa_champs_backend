@@ -1,5 +1,5 @@
 {
-  "name": "spectrm_backend",
+  "name": "fifa_champs_backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -34,7 +34,7 @@
     "morgan": "^1.9.0"
   },
   "devDependencies": {
-    "axios-api-doc-generator": "1.1.1",
+    "axios-api-doc-generator": "1.1.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "jest": "^22.4.4",

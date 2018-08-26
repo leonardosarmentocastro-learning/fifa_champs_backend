@@ -11,10 +11,6 @@ const DEFAULT = {
     token: 'authentication-token-development-fifa-champs',
   },
   environment: 'development',
-  giphy: {
-    apiKey: 'default-giphy-apikey',
-    host: 'api.giphy.com',
-  },
   ip: '127.0.0.1',
   mongodb: {
     database: {
@@ -36,12 +32,6 @@ const authentication = {
 
 // # E
 const environment = getenv.string('ENVIRONMENT', DEFAULT.environment);
-
-// # G
-const giphy = {
-  apiKey: getenv.string('GIPHY_API_KEY', DEFAULT.giphy.apiKey),
-  host: getenv.string('GIPHY_HOST', DEFAULT.giphy.host),
-};
 
 // # I
 const ip = getenv.string('IP', DEFAULT.ip);
@@ -68,7 +58,6 @@ const IS_PRODUCTION_ENVIRONMENT = !(IS_DEVELOPMENT_ENVIRONMENT || IS_TEST_ENVIRO
 const ENVIRONMENT_VARIABLES = {
   authentication,
   environment,
-  giphy,
   ip,
   IS_DEVELOPMENT_ENVIRONMENT,
   IS_PRODUCTION_ENVIRONMENT,
