@@ -1,10 +1,48 @@
-const authenticationService = require('../../service');
+const { authenticationService, authenticationValidator } = require('../../');
 
 describe('[unit-test] authenticationService', () => {
   let stubbedService = null;
 
   beforeEach(() => {
     stubbedService = { ...authenticationService };
+  });
+
+  describe('[method] doesEncryptedAndUnencryptedValuesMatch', () => {
+    it('it must return "true" when the "encryptedValue" corresponds to the provided "unencryptedValue"', async () => {
+      const unencryptedValue = '1q2w#E$R';
+      const encryptedValue = await stubbedService.encryptPassword(unencryptedValue);
+
+      const doesEncryptedAndUnencryptedValuesMatch = await stubbedService.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue);
+      expect(doesEncryptedAndUnencryptedValuesMatch).toBeTruthy();
+    });
+
+    it('it must return "false" when the "encryptedValue" does not corresponds to the provided "unencryptedValue"', async () => {
+      const unencryptedValue = '1q2w#E$R';
+      const encryptedValue = await stubbedService.encryptPassword(unencryptedValue);
+
+      const notUnencryptedValue = '12345678';
+      const doesEncryptedAndUnencryptedValuesMatch = await stubbedService.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, notUnencryptedValue);
+      expect(doesEncryptedAndUnencryptedValuesMatch).toBeFalsy();
+    });
+  });
+
+  describe('[method] encryptPassword', () => {
+    it('returns an encrypted value', async () => {
+      const password = '1q2w#E$R';
+      const encryptedPassword = await stubbedService.encryptPassword(password);
+
+      expect(password).not.toBe(encryptedPassword);
+    });
+
+    it('returns an error object when can\'t encrypt the password', async () => {
+      stubbedService.bcrypt.hash = () => { throw authenticationValidator.ERRORS.CANT_ENCRYPT_PASSWORD; };
+
+      const password = '1q2w#E$R';
+      return await stubbedService.encryptPassword(password)
+        .catch(error => {
+          expect(error).toEqual(authenticationValidator.ERRORS.CANT_ENCRYPT_PASSWORD);
+        });
+    });
   });
 
   describe('[method] getTokenWithoutBearerKeyword', () => {

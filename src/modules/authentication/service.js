@@ -11,12 +11,10 @@ const authenticationService = {
   get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
   get jwt() { return { ...jwt }; },
 
-  // TODO: add tests
   async doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue) {
     return await this.bcrypt.compare(unencryptedValue, encryptedValue);
   },
 
-  // TODO: add tests
   async encryptPassword(password) {
     const salt = 10;
     const encryptPassword = await this.bcrypt.hash(password, salt)

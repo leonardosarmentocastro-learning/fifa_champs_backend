@@ -27,11 +27,11 @@ const { Webserver } = require('./src/webserver');
     };
     const savedUser = await usersService.signUp(user);
 
-    const users = await model.find();
     const encryptedValue = savedUser.privateFields.password;
     const unencryptedValue = user.password;
     const doesEncryptedAndUnencryptedValuesMatch = await authenticationService.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue);
     console.log('#### doesEncryptedAndUnencryptedValuesMatch', doesEncryptedAndUnencryptedValuesMatch); // TODO: FIX IT
+    const users = await model.find();
     console.log('### users', JSON.stringify(users, null, 2));
 
     } catch(error) {

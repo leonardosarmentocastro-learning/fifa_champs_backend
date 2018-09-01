@@ -11,7 +11,7 @@
     "start:development": "npm run prestart && nodemon ./index.js",
     "lint": "eslint src/ --fix",
     "pretest": "npm run create:environment-variables:file:for-test",
-    "test": "jest --forceExit --runInBand --config=./config/jest/jest.config.js",
+    "test": "jest --verbose --forceExit --runInBand --config=./config/jest/jest.config.js",
     "test:watch": "npm run test -- --watch"
   },
   "author": "Leonardo Sarmento de Castro",
