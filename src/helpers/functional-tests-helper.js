@@ -1,3 +1,4 @@
+const axios = require('axios');
 const { createAxiosInstance } = require('axios-api-doc-generator');
 
 const { ENVIRONMENT_VARIABLES } = require('../internals');
@@ -21,6 +22,12 @@ const functionalTestsHelper = {
     withoutAuthentication: (() => {
       const { ip, port } = ENVIRONMENT_VARIABLES;
       const instance = createAxiosInstance({ baseURL: `http://${ip}:${port}` });
+
+      return instance;
+    })(),
+    withoutInterceptor: (() => {
+      const { ip, port } = ENVIRONMENT_VARIABLES;
+      const instance = axios.create({ baseURL: `http://${ip}:${port}` });
 
       return instance;
     })(),

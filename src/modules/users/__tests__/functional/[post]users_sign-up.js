@@ -1,17 +1,14 @@
 const axiosApiDocGenerator = require('axios-api-doc-generator');
 
 const {
-  API: { withAuthentication: API },
+  API: { withoutAuthentication: API, withoutInterceptor: APIwithoutInterceptor },
   closeWebserver,
   startWebserver,
 } = require('../../../../helpers/functional-tests-helper');
 const { removeAllUsersFromDatabase } = require('./helper');
-const usersValidator = require('../../validator');
+const { usersService, usersValidator } = require('../../');
 
-beforeAll(async () => {
-  await startWebserver();
-  return await removeAllUsersFromDatabase();
-});
+beforeAll(() => startWebserver());
 
 afterAll(async () => {
   await axiosApiDocGenerator.createApiDocsForTests();
@@ -20,24 +17,19 @@ afterAll(async () => {
 
 const ENDPOINT = '/api/users/sign-up';
 describe(`[POST] ${ENDPOINT}`, () => {
-  it('(200) when receiving a valid user', () => {
-    const user = {
-      slack: {
-        displayName: '@leonardo.caxumba',
-      },
-      password: '1q2w#E$R',
-    };
+  beforeEach(() => removeAllUsersFromDatabase());
 
-    return API.post(ENDPOINT, user)
-      .catch(err => {
-        const body = err.response.data;
-        // TODO
-        // 1. write expectations
-        // Fix "usersService.signUp"
+  // it('(200) when receiving a valid user', async () => {
+  //   const user = {
+  //     email: 'valid@email.com',
+  //     username: 'leonardo',
+  //     password: '1q2w#E$R',
+  //   };
 
-        // expect(body).toMatchObject(user);
-      });
-  });
+  //   // TODO: check if there is an Authorization header and the response body is empty.
+  //   // const response = await API.post(ENDPOINT, user);
+  //   // expect(savedUser).toMatchObject(user);
+  // });
 
   it('(500) when receiving an empty user', () => {
     const user = {};
@@ -49,51 +41,119 @@ describe(`[POST] ${ENDPOINT}`, () => {
       });
   });
 
-  it('(500) when receiving an empty "user.slack.displayName"', () => {
-    const user = {
-      slack: {
-        displayName: '',
-      },
-    };
+  describe('[validations] username', () => {
+    it('(500) when receiving an empty "user.username"', () => {
+      const user = { username: '' };
 
-    return API.post(ENDPOINT, user)
-      .catch(err => {
-        const body = err.response.data;
-        expect(body).toEqual(usersValidator.ERRORS.NO_SLACK_DISPLAY_NAME_PROVIDED);
-      });
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.USERNAME_NOT_PROVIDED);
+        });
+    });
+
+    it('(500) when receiving an "user.username" that is too long', () => {
+      const user = { username: 'username that is too long' };
+
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.USERNAME_TOO_LONG);
+        });
+    });
+
+    it('(500) when receiving an "user.username" that is already in use', async () => {
+      const username = 'leonardo';
+      const user1 = {
+        username,
+        email: 'valid@email.com',
+        password: '1q2w#E$R',
+      };
+      const user2 = {
+        username,
+        email: 'another@email.com',
+        password: '1q2w#E$R',
+      };
+
+      await APIwithoutInterceptor.post(ENDPOINT, user1);
+      return API.post(ENDPOINT, user2)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.USERNAME_ALREADY_IN_USE);
+        });
+    });
   });
 
-  it('(500) when receiving an empty "user.password"', () => {
-    const user = {
-      slack: {
-        displayName: '@leonardo.caxumba',
-      },
-      password: '',
-    };
+  describe('[validations] email', () => {
+    it('(500) when receiving an empty "user.email"', () => {
+      const user = { username: 'leonardo', email: '' };
 
-    return API.post(ENDPOINT, user)
-      .catch(err => {
-        const body = err.response.data;
-        expect(body).toEqual(usersValidator.ERRORS.NO_PASSWORD_PROVIDED);
-      });
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.EMAIL_NOT_PROVIDED);
+        });
+    });
+
+    it('(500) when receiving an "user.email" that is invalid', () => {
+      const user = { username: 'leonardo', email: 'invalid#1~@email#.com' };
+
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.EMAIL_NOT_VALID);
+        });
+    });
+
+    it('(500) when receiving an "user.email" that is already in use', async () => {
+      const email = 'email@already-in-use.com';
+      const user1 = {
+        email,
+        username: 'user1',
+        password: '1q2w#E$R',
+      };
+      const user2 = {
+        email,
+        username: 'user2',
+        password: '1q2w#E$R',
+      };
+
+      await APIwithoutInterceptor.post(ENDPOINT, user1);
+      return API.post(ENDPOINT, user2)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.EMAIL_ALREADY_IN_USE);
+        });
+    });
   });
 
-  it('(500) when receiving an "user.password" that is not strong enough', () => {
-    const user = {
-      slack: {
-        displayName: '@leonardo.caxumba',
-      },
-      password: 'not strong enough',
-    };
+  describe('[validations] password', () => {
+    it('(500) when receiving an empty "user.password"', () => {
+      const user = {
+        email: 'valid@email.com',
+        password: '',
+        username: 'leonardo',
+      };
 
-    return API.post(ENDPOINT, user)
-      .catch(err => {
-        const body = err.response.data;
-        expect(body).toEqual(usersValidator.ERRORS.PASSWORD_IS_NOT_STRONG_ENOUGH);
-      });
-  });
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.PASSWORD_NOT_PROVIDED);
+        });
+    });
 
-  it('(500) when receiving an user which the given "slack.displayName" already exists', () => {
-    // TODO
+    it('(500) when receiving an "user.password" that is not strong enough', () => {
+      const user = {
+        email: 'valid@email.com',
+        password: 'not strong enough',
+        username: 'leonardo',
+      };
+
+      return API.post(ENDPOINT, user)
+        .catch(err => {
+          const body = err.response.data;
+          expect(body).toEqual(usersValidator.ERRORS.PASSWORD_NOT_STRONG_ENOUGH);
+        });
+    });
   });
 });

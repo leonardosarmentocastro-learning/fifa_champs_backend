@@ -6,7 +6,8 @@ const usersController = {
       const user = req.body;
       const savedUser = await usersService.signUp(user);
 
-      return res.status(200).json(savedUser);
+      // TODO: Create authorization token and attach it to the response's headers.
+      return res.status(200).end();
     } catch(err) {
       return res.status(500).json(err);
     }

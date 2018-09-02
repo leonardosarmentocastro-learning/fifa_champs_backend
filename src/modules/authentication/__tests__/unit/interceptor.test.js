@@ -71,13 +71,13 @@ describe('[unit-test] authenticationInterceptor', () => {
           .toBeTruthy();
       });
 
-      it('[POST] /users/sign_in', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign_in'))
+      it('[POST] /users/sign-in', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign-in'))
           .toBeTruthy();
       });
 
-      it('[POST] /users/sign_up', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign_up'))
+      it('[POST] /users/sign-up', () => {
+        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign-up'))
           .toBeTruthy();
       });
     });

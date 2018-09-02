@@ -2,20 +2,15 @@
 
 ## Roadmap
 
-1. "authenticationService":
-  * encryption
-    * Add unit tests.
-  * compare
-    * Add unit tests.
 2. Finish user "Sign up":
-  * receive "email", "username" and "password"
+  <!-- * receive "email", "username" and "password" -->
     * validation "email": is empty?
     * validation "email": is valid email?
     * validation "email": is already in use?
     * validation "username": is empty?
     * validation "username": has more than 16 characters?
     * validation "username": is already in use?
-  * Changes on schema:
+  <!-- * Changes on schema: -->
     * Add "email"
     * Add "username"
     * Remove "slack" properties

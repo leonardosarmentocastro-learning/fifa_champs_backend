@@ -3,13 +3,18 @@ const { Schema } = require('mongoose');
 const { sharedSchema } = require('../shared');
 
 const usersSchema = new Schema({
+  // # E
+  email: String,
+
   // # S
   ...sharedSchema,
 
   slack: {
-    displayName: String,
     icon: String,
   },
+
+  // # U
+  username: String,
 
   privateFields: {
     // # P
