@@ -18,7 +18,10 @@
       * error
     * validation "password": matches encrypted value?
   * returns status (200) and a jwt token on the "Authorization" header
-4. Add a match
+4. Move all configuration stuff to "config" folder
+  * eslint
+  * .env (use "config_path" option on CLI)
+5. Add a match
   * TBD
 ...
 * Add docker so we can run e2e tests on frontend's CI with Cypress
