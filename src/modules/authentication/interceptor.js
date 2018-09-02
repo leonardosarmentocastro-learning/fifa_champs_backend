@@ -1,93 +1,22 @@
-const ENVIRONMENT_VARIABLES = require('../../internals/environment-variables');
-const authenticationService = require('../../modules/authentication/service');
+const { authenticationValidator } = require('../../modules/authentication');
 
 const authenticationInterceptor = {
-  // Injecting dependencies / properties
-  get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
-  get authenticationService() { return { ...authenticationService }; },
-  get ERRORS() {
-    return {
-      AUTHORIZATION_TOKEN_IS_INVALID: {
-        code: 'AUTHORIZATION_TOKEN_IS_INVALID',
-        message: 'The provided "Authorization" token is invalid.',
-      },
-      NO_AUTHORIZATION_TOKEN_PROVIDED: {
-        code: 'NO_AUTHORIZATION_TOKEN_PROVIDED',
-        message: 'No "Authorization" token was provided on the request\'s header.',
-      },
-    };
-  },
+  // Dependency injection
+  get authenticationValidator() { return { ...authenticationValidator }; },
 
   connect(app) {
     // We bind "this" because otherwise it will refer to "express.js" context.
     app.use(this.middleware.bind(this));
   },
 
-  isAccessingUsingAnValidEnvironmentToken(token) {
-    const isAccessingUsingAnValidEnvironmentToken = true;
-
-    // Environment tokens are not allowed in production mode.
-    const { IS_PRODUCTION_ENVIRONMENT } = this.ENVIRONMENT_VARIABLES;
-    if (IS_PRODUCTION_ENVIRONMENT) {
-      return !isAccessingUsingAnValidEnvironmentToken;
-    }
-
-    const { authentication: environment } = this.ENVIRONMENT_VARIABLES;
-    if (token === environment.token) {
-      return isAccessingUsingAnValidEnvironmentToken;
-    }
-
-    return !isAccessingUsingAnValidEnvironmentToken;
-  },
-
-  isAccessingWhitelistedRoute(method, url) {
-    const isCorsVerification = (method === 'OPTIONS');
-    const isCheckingServerHealthiness = (method === 'GET' && url === '/api/health');
-    const isSigningInUsers = (method === 'POST' && url === '/api/users/sign-in');
-    const isSigningUpUsers = (method === 'POST' && url === '/api/users/sign-up');
-
-    const isAccessingWhitelistedRoute = (
-      isCorsVerification ||
-      isCheckingServerHealthiness ||
-      isSigningInUsers ||
-      isSigningUpUsers
-    );
-    return isAccessingWhitelistedRoute;
-  },
-
   middleware(req, res, next) {
     const authorize = next;
-    const token = req.header('Authorization');
+    const unauthorize = (error, res) => res.status(401).json(error);
 
-    const { method, url } = req;
-    const isAccessingWhitelistedRoute = this.isAccessingWhitelistedRoute(method, url);
-    if (isAccessingWhitelistedRoute) {
-      return authorize();
-    }
+    const error = this.authenticationValidator.validateForMiddlewareAuthorization(req);
+    if (error) return unauthorize(error, res);
 
-    const hasProvidedAnAuthorizationToken = Boolean(token);
-    if (!hasProvidedAnAuthorizationToken) {
-      const error = this.ERRORS.NO_AUTHORIZATION_TOKEN_PROVIDED;
-      return this.unauthorize(error, res);
-    }
-
-    const isAccessingUsingAnValidEnvironmentToken =
-      this.isAccessingUsingAnValidEnvironmentToken(token);
-    if (isAccessingUsingAnValidEnvironmentToken) {
-      return authorize();
-    }
-
-    const isAnValidJwtToken = this.authenticationService.isAnValidJwtToken(token);
-    if (isAnValidJwtToken) {
-      return authorize();
-    }
-
-    const error = this.ERRORS.AUTHORIZATION_TOKEN_IS_INVALID;
-    return this.unauthorize(error, res);
-  },
-
-  unauthorize(error, res) {
-    return res.status(401).json(error);
+    return authorize();
   },
 };
 

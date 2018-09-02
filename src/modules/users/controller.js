@@ -1,4 +1,5 @@
 const usersService = require('./service');
+const { authenticationService } = require('../authentication');
 
 const usersController = {
   async signUp(req, res) {
@@ -6,7 +7,9 @@ const usersController = {
       const user = req.body;
       const savedUser = await usersService.signUp(user);
 
-      // TODO: Create authorization token and attach it to the response's headers.
+      const token = authenticationService.createAuthorizationTokenForUser(savedUser);
+      authenticationService.setAuthorizationTokenOnResponse(token, res);
+
       return res.status(200).end();
     } catch(err) {
       return res.status(500).json(err);

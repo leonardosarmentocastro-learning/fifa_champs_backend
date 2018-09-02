@@ -1,4 +1,4 @@
-const usersModel = require('../../model');
+const { usersModel } = require('../../');
 
 const helper = {
   removeAllUsersFromDatabase() {

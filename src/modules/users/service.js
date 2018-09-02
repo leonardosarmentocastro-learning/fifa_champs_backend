@@ -1,6 +1,6 @@
-const { authenticationService } = require('./../authentication');
 const usersModel = require('./model');
 const usersValidator = require('./validator');
+const { authenticationService } = require('./../authentication');
 
 const usersService = {
   // Dependency injection
@@ -10,10 +10,7 @@ const usersService = {
 
   async signUp(user) {
     const error = await this.usersValidator.validateForSignUp(user);
-    const hasErrors = Boolean(error);
-    if (hasErrors) {
-      throw error;
-    }
+    if (error) throw error;
 
     const encryptedPassword = await this.authenticationService.encryptPassword(user.password);
     user.privateFields = { password: encryptedPassword };

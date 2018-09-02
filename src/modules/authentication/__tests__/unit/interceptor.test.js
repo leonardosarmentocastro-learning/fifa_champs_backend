@@ -1,180 +1,103 @@
 const authenticationInterceptor = require('../../interceptor');
 
 describe('[unit-test] authenticationInterceptor', () => {
-  let stubbedInterceptor = null;
+  let interceptor = null;
 
   beforeEach(() => {
-    stubbedInterceptor = { ...authenticationInterceptor };
+    interceptor = { ...authenticationInterceptor };
   });
 
-  describe('[method] isAccessingUsingAnValidEnvironmentToken', () => {
-    describe('if the current application environment is "production"', () => {
-      const specs = {
-        token: 'environment-tokens-are-not-allowed-in-production-mode',
-      };
+  afterEach(() => jest.resetAllMocks());
 
-      beforeEach(() => {
-        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_PRODUCTION_ENVIRONMENT = true;
-      });
-
-      it('it must return a "false" boolean', () => {
-        expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
-          .toBeFalsy();
-      });
-    });
-
-    describe('if the current application environment is "development" or "test"', () => {
-      const specs = {
-        token: 'environment-token',
-        notEnvironmentToken: 'not-environment-token',
-      };
-
-      beforeEach(() => {
-        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_DEVELOPMENT_ENVIRONMENT = true;
-        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_TEST_ENVIRONMENT = true;
-        stubbedInterceptor.ENVIRONMENT_VARIABLES.IS_PRODUCTION_ENVIRONMENT = false;
-      });
-
-      describe('and the provided "token" matches the "environment token"', () => {
-        beforeEach(() => {
-          stubbedInterceptor.ENVIRONMENT_VARIABLES.authentication.token = specs.token;
-        });
-
-        it('it must return a "true" boolean', () => {
-          expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
-            .toBeTruthy();
-        });
-      });
-
-      describe('and the provided "token" does not match the "environment token"', () => {
-        beforeEach(() => {
-          stubbedInterceptor.ENVIRONMENT_VARIABLES.authentication.token = specs.notEnvironmentToken;
-        });
-
-        it('it must return a "false" boolean', () => {
-          expect(stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken(specs.token))
-            .toBeFalsy();
-        });
-      });
-    });
-  });
-
-  describe('[method] isAccessingWhitelistedRoute', () => {
-    describe('the following routes must be bypassed:', () => {
-      it('(CORS verification) [OPTIONS] *', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('OPTIONS', ''))
-          .toBeTruthy();
-      });
-
-      it('[GET] /api/health', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('GET', '/api/health'))
-          .toBeTruthy();
-      });
-
-      it('[POST] /users/sign-in', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign-in'))
-          .toBeTruthy();
-      });
-
-      it('[POST] /users/sign-up', () => {
-        expect(stubbedInterceptor.isAccessingWhitelistedRoute('POST', '/api/users/sign-up'))
-          .toBeTruthy();
-      });
-    });
-  });
+  const specs = {
+    req: {
+      header: () => null,
+      method: '',
+      url: '',
+    },
+    res: {
+      json: jest.fn(),
+      status: jest.fn()
+    },
+    next: jest.fn(),
+  };
 
   describe('[method] middleware', () => {
-    const specs = {
-      req: {
-        header: () => null,
-        method: '',
-        url: '',
-      },
-      res: {},
-      next: jest.fn(),
-    };
-
-    beforeEach(() => {
-      jest.resetAllMocks();
-    });
-
     describe('the request must be authorized when', () => {
-      describe('a whitelisted route is being accessed', () => {
+      describe('', () => {
         beforeEach(() => {
-          stubbedInterceptor.isAccessingWhitelistedRoute = () => true;
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => true;
         });
 
-        it('', () => {
-          stubbedInterceptor.middleware(specs.req, specs.res, specs.next);
+        it('a whitelisted route is being accessed', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
           expect(specs.next).toHaveBeenCalledTimes(1);
         });
       });
 
-      describe('and a valid environment token is being used', () => {
+      describe('', () => {
         beforeEach(() => {
           specs.req.header = () => 'has-provided-an-authorization-header';
 
-          stubbedInterceptor.isAccessingWhitelistedRoute = () => false;
-          stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken = () => true;
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
+          interceptor.authenticationValidator.isAccessingUsingAnValidEnvironmentToken = () => true;
         });
 
-        it('', () => {
-          stubbedInterceptor.middleware(specs.req, specs.res, specs.next);
+        it('and a valid environment token is being used', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
           expect(specs.next).toHaveBeenCalledTimes(1);
         });
       });
 
-      describe('or a valid JWT token is being used', () => {
+      describe('', () => {
         beforeEach(() => {
           specs.req.header = () => 'has-provided-an-authorization-header';
 
-          stubbedInterceptor.isAccessingWhitelistedRoute = () => false;
-          stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken = () => false;
-          stubbedInterceptor.authenticationService.isAnValidJwtToken = () => true;
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
+          interceptor.authenticationValidator.isAccessingUsingAnValidEnvironmentToken = () => false;
+          interceptor.authenticationValidator.isAnValidJwtToken = () => true;
         });
 
-        it('', () => {
-          stubbedInterceptor.middleware(specs.req, specs.res, specs.next);
+        it('or a valid JWT token is being used', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
           expect(specs.next).toHaveBeenCalledTimes(1);
         });
       });
     });
 
     describe('the request must be unauthorized when', () => {
-      describe('no authorization token was provided', () => {
+      describe('', () => {
         beforeEach(() => {
-          stubbedInterceptor.unauthorize = jest.fn();
-
           specs.req.header = () => '';
-          stubbedInterceptor.isAccessingWhitelistedRoute = () => false;
+          specs.res.status = jest.fn(() => specs.res);
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
         });
 
-        it('returning a "NO_AUTHORIZATION_TOKEN_PROVIDED" error', () => {
-          stubbedInterceptor.middleware(specs.req, specs.res, specs.next);
+        it('no authorization token was provided', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
 
-          const error = stubbedInterceptor.ERRORS.NO_AUTHORIZATION_TOKEN_PROVIDED;
-          expect(stubbedInterceptor.unauthorize)
-            .toHaveBeenCalledWith(error, specs.res);
+          const error = interceptor.authenticationValidator.ERRORS.AUTHORIZATION_TOKEN_NOT_PROVIDED;
+          expect(specs.res.status).toHaveBeenCalledWith(401);
+          expect(specs.res.json).toHaveBeenCalledWith(error);
         });
       });
 
-      describe('the authorization token is invalid', () => {
+      describe('', () => {
         beforeEach(() => {
-          stubbedInterceptor.unauthorize = jest.fn();
-
           specs.req.header = () => 'has-provided-an-authorization-header';
+          specs.res.status = jest.fn(() => specs.res);
 
-          stubbedInterceptor.isAccessingWhitelistedRoute = () => false;
-          stubbedInterceptor.isAccessingUsingAnValidEnvironmentToken = () => false;
-          stubbedInterceptor.authenticationService.isAnValidJwtToken = () => false;
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
+          interceptor.authenticationValidator.isAccessingUsingAnValidEnvironmentToken = () => false;
+          interceptor.authenticationValidator.isAnValidJwtToken = () => false;
         });
 
-        it('returning a "AUTHORIZATION_TOKEN_IS_INVALID" error', () => {
-          stubbedInterceptor.middleware(specs.req, specs.res, specs.next);
+        it('the authorization token is invalid', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
 
-          const error = stubbedInterceptor.ERRORS.AUTHORIZATION_TOKEN_IS_INVALID;
-          expect(stubbedInterceptor.unauthorize)
-            .toHaveBeenCalledWith(error, specs.res);
+          const error = interceptor.authenticationValidator.ERRORS.TOKEN_IS_INVALID;
+          expect(specs.res.status).toHaveBeenCalledWith(401);
+          expect(specs.res.json).toHaveBeenCalledWith(error);
         });
       });
     });
