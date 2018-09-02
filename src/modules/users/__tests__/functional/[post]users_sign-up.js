@@ -19,17 +19,23 @@ const ENDPOINT = '/api/users/sign-up';
 describe(`[POST] ${ENDPOINT}`, () => {
   beforeEach(() => removeAllUsersFromDatabase());
 
-  // it('(200) when receiving a valid user', async () => {
-  //   const user = {
-  //     email: 'valid@email.com',
-  //     username: 'leonardo',
-  //     password: '1q2w#E$R',
-  //   };
+  it('(200) when receiving a valid user', async () => {
+    const user = {
+      email: 'valid@email.com',
+      username: 'leonardo',
+      password: '1q2w#E$R',
+    };
 
-  //   // TODO: check if there is an Authorization header and the response body is empty.
-  //   // const response = await API.post(ENDPOINT, user);
-  //   // expect(savedUser).toMatchObject(user);
-  // });
+    const response = await API.post(ENDPOINT, user);
+    const { data: body, headers } = response;
+
+    // body
+    expect(body).toBe('');
+
+    // headers
+    expect(typeof headers.authorization).toBe('string');
+    expect(headers.authorization).not.toBeNull();
+  });
 
   it('(500) when receiving an empty user', () => {
     const user = {};
