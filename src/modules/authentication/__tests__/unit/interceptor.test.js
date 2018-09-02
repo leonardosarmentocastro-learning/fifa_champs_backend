@@ -17,7 +17,7 @@ describe('[unit-test] authenticationInterceptor', () => {
     },
     res: {
       json: jest.fn(),
-      status: jest.fn()
+      status: jest.fn(),
     },
     next: jest.fn(),
   };

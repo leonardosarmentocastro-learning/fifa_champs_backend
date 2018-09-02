@@ -25,7 +25,7 @@ const authenticationService = {
   async encryptPassword(password) {
     const salt = 10;
     const encryptPassword = await this.bcrypt.hash(password, salt)
-      .catch(err => {
+      .catch(() => {
         const error = this.authenticationValidator.ERRORS.PASSWORD_COULDNT_BE_ENCRYPTED;
         throw error;
       });

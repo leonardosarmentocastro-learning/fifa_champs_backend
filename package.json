@@ -17,6 +17,7 @@
   "author": "Leonardo Sarmento de Castro",
   "license": "ISC",
   "dependencies": {
+    "axios-api-doc-generator": "^1.1.2",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
@@ -36,7 +37,6 @@
     "validator": "^10.7.0"
   },
   "devDependencies": {
-    "axios-api-doc-generator": "1.1.2",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "jest": "^22.4.4",

@@ -40,7 +40,7 @@ const authenticationValidator = {
   },
 
   async doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue) {
-    return await this.bcrypt.compare(unencryptedValue, encryptedValue);
+    return this.bcrypt.compare(unencryptedValue, encryptedValue);
   },
 
   getTokenWithoutBearerKeyword(token) {
@@ -60,7 +60,7 @@ const authenticationValidator = {
   isAccessingUsingAnValidEnvironmentToken(token) {
     const {
       authentication: environment,
-      IS_PRODUCTION_ENVIRONMENT
+      IS_PRODUCTION_ENVIRONMENT,
     } = this.ENVIRONMENT_VARIABLES;
 
     // Environment tokens are not allowed in production mode.
@@ -142,7 +142,8 @@ const authenticationValidator = {
       return error;
     }
 
-    const isAccessingUsingAnValidEnvironmentToken = this.isAccessingUsingAnValidEnvironmentToken(token);
+    const isAccessingUsingAnValidEnvironmentToken =
+      this.isAccessingUsingAnValidEnvironmentToken(token);
     if (isAccessingUsingAnValidEnvironmentToken) {
       return null;
     }
@@ -154,7 +155,7 @@ const authenticationValidator = {
     }
 
     return null;
-  }
+  },
 };
 
 module.exports = authenticationValidator;

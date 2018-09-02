@@ -11,10 +11,10 @@ const authenticationInterceptor = {
 
   middleware(req, res, next) {
     const authorize = next;
-    const unauthorize = (error, res) => res.status(401).json(error);
+    const unauthorize = error => res.status(401).json(error);
 
     const error = this.authenticationValidator.validateForMiddlewareAuthorization(req);
-    if (error) return unauthorize(error, res);
+    if (error) return unauthorize(error);
 
     return authorize();
   },

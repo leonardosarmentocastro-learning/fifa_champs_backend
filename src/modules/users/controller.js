@@ -11,7 +11,7 @@ const usersController = {
       authenticationService.setAuthorizationTokenOnResponse(token, res);
 
       return res.status(200).end();
-    } catch(err) {
+    } catch (err) {
       return res.status(500).json(err);
     }
   },

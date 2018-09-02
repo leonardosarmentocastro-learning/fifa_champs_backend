@@ -12,7 +12,8 @@ describe('[unit-test] authenticationValidator', () => {
       const unencryptedValue = '1q2w#E$R';
       const encryptedValue = await authenticationService.encryptPassword(unencryptedValue);
 
-      const doesEncryptedAndUnencryptedValuesMatch = await validator.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue);
+      const doesEncryptedAndUnencryptedValuesMatch =
+        await validator.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue);
       expect(doesEncryptedAndUnencryptedValuesMatch).toBeTruthy();
     });
 
@@ -21,7 +22,8 @@ describe('[unit-test] authenticationValidator', () => {
       const encryptedValue = await authenticationService.encryptPassword(unencryptedValue);
 
       const notUnencryptedValue = '12345678';
-      const doesEncryptedAndUnencryptedValuesMatch = await validator.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, notUnencryptedValue);
+      const doesEncryptedAndUnencryptedValuesMatch =
+        await validator.doesEncryptedAndUnencryptedValuesMatch(encryptedValue, notUnencryptedValue);
       expect(doesEncryptedAndUnencryptedValuesMatch).toBeFalsy();
     });
   });

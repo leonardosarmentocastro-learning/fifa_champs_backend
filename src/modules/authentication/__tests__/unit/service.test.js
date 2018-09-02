@@ -16,12 +16,13 @@ describe('[unit-test] authenticationService', () => {
     });
 
     it('returns an error object when can\'t encrypt the password', async () => {
-      service.bcrypt.hash = () => { throw authenticationValidator.ERRORS.PASSWORD_COULDNT_BE_ENCRYPTED; };
+      const err = authenticationValidator.ERRORS.PASSWORD_COULDNT_BE_ENCRYPTED;
+      service.bcrypt.hash = () => { throw err; };
 
       const password = '1q2w#E$R';
-      return await service.encryptPassword(password)
-        .catch(error => {
-          expect(error).toEqual(authenticationValidator.ERRORS.PASSWORD_COULDNT_BE_ENCRYPTED);
+      await service.encryptPassword(password)
+        .catch((error) => {
+          expect(error).toEqual(err);
         });
     });
   });

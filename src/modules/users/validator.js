@@ -5,13 +5,13 @@ const usersModel = require('./model');
 
 const usersValidator = {
   // Dependency injection
-  get usersModel() { return usersModel },
+  get usersModel() { return usersModel; },
 
   get constraints() {
     return {
       username: {
         maxlength: 16,
-      }
+      },
     };
   },
   get ERRORS() {
@@ -74,7 +74,7 @@ const usersValidator = {
       }
 
       return false;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   },
@@ -88,7 +88,7 @@ const usersValidator = {
       }
 
       return false;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   },
@@ -99,7 +99,7 @@ const usersValidator = {
       return error;
     }
 
-    const { email, password, username, } = user;
+    const { email, password, username } = user;
 
     // username
     const hasUsername = Boolean(username);

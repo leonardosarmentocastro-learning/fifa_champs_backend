@@ -12,11 +12,11 @@ afterAll(async () => {
   return closeWebserver();
 });
 
-const ENDPOINT = `/api/health`;
+const ENDPOINT = '/api/health';
 describe(`[GET] ${ENDPOINT}`, () => {
   it('(200) must return a { status: "OK" }', async () => {
     const response = await API.get(ENDPOINT);
-    body = response.data;
+    const { data: body } = response;
 
     expect(body).toEqual({ status: 'OK' });
   });

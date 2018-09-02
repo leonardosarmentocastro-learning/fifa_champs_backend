@@ -1,4 +1,3 @@
-const axiosApiDocGenerator = require('axios-api-doc-generator');
 const chalk = require('chalk');
 const express = require('express');
 const http = require('http');
@@ -21,10 +20,10 @@ class Webserver {
   }
 
   close() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const isServerRunning = this.server.listening;
       if (!isServerRunning) {
-        return resolve();
+        resolve();
       }
 
       this.server.close(() => {
@@ -34,7 +33,7 @@ class Webserver {
           ######################################
         `);
 
-        return resolve(console.info(message)); // eslint-disable-line
+        resolve(console.info(message)); // eslint-disable-line
       });
     });
   }

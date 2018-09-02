@@ -1,11 +1,11 @@
 const usersModel = require('./model');
 const usersValidator = require('./validator');
-const { authenticationService } = require('./../authentication');
+const { authenticationService } = require('./../authentication');
 
 const usersService = {
   // Dependency injection
-  get authenticationService() { return { ...authenticationService } },
-  get usersModel() { return usersModel },
+  get authenticationService() { return { ...authenticationService }; },
+  get usersModel() { return usersModel; },
   get usersValidator() { return { ...usersValidator }; },
 
   async signUp(user) {

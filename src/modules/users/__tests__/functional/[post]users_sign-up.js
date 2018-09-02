@@ -6,7 +6,7 @@ const {
   startWebserver,
 } = require('../../../../helpers/functional-tests-helper');
 const { removeAllUsersFromDatabase } = require('./helper');
-const { usersService, usersValidator } = require('../../');
+const { usersValidator } = require('../../');
 
 beforeAll(() => startWebserver());
 
@@ -41,7 +41,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
     const user = {};
 
     return API.post(ENDPOINT, user)
-      .catch(err => {
+      .catch((err) => {
         const body = err.response.data;
         expect(body).toEqual(usersValidator.ERRORS.USER_IS_EMPTY);
       });
@@ -52,7 +52,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       const user = { username: '' };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.USERNAME_NOT_PROVIDED);
         });
@@ -62,7 +62,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       const user = { username: 'username that is too long' };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.USERNAME_TOO_LONG);
         });
@@ -83,7 +83,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
 
       await APIwithoutInterceptor.post(ENDPOINT, user1);
       return API.post(ENDPOINT, user2)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.USERNAME_ALREADY_IN_USE);
         });
@@ -95,7 +95,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       const user = { username: 'leonardo', email: '' };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.EMAIL_NOT_PROVIDED);
         });
@@ -105,7 +105,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       const user = { username: 'leonardo', email: 'invalid#1~@email#.com' };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.EMAIL_NOT_VALID);
         });
@@ -126,7 +126,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
 
       await APIwithoutInterceptor.post(ENDPOINT, user1);
       return API.post(ENDPOINT, user2)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.EMAIL_ALREADY_IN_USE);
         });
@@ -142,7 +142,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.PASSWORD_NOT_PROVIDED);
         });
@@ -156,7 +156,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       };
 
       return API.post(ENDPOINT, user)
-        .catch(err => {
+        .catch((err) => {
           const body = err.response.data;
           expect(body).toEqual(usersValidator.ERRORS.PASSWORD_NOT_STRONG_ENOUGH);
         });
