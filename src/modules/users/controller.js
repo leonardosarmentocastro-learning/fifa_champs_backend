@@ -1,7 +1,18 @@
 const usersService = require('./service');
+const usersValidator = require('./validator');
 const { authenticationService } = require('../authentication');
 
 const usersController = {
+  constraints(req, res) {
+    const { constraints, regex } = usersValidator;
+    regex.forValidatingPasswordStrength = regex.forValidatingPasswordStrength.toString();
+
+    return res.status(200).json({
+      ...constraints,
+      regex,
+    });
+  },
+
   async signUp(req, res) {
     try {
       const user = req.body;

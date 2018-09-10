@@ -74,12 +74,14 @@ const authenticationValidator = {
   isAccessingWhitelistedRoute(method, url) {
     const isCorsVerification = (method === 'OPTIONS');
     const isCheckingServerHealthiness = (method === 'GET' && url === '/api/health');
+    const isGettingUsersConstraints = (method === 'GET' && url === '/api/users/constraints');
     const isSigningInUsers = (method === 'POST' && url === '/api/users/sign-in');
     const isSigningUpUsers = (method === 'POST' && url === '/api/users/sign-up');
 
     return (
       isCorsVerification ||
       isCheckingServerHealthiness ||
+      isGettingUsersConstraints ||
       isSigningInUsers ||
       isSigningUpUsers
     );

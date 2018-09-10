@@ -104,24 +104,19 @@ describe('[unit-test] authenticationValidator', () => {
 
   describe('[method] isAccessingWhitelistedRoute', () => {
     describe('the following routes must be bypassed:', () => {
-      it('(CORS verification) [OPTIONS] *', () => {
-        expect(validator.isAccessingWhitelistedRoute('OPTIONS', ''))
-          .toBeTruthy();
-      });
+      const routes = [
+        { method: 'OPTIONS', url: '' },
+        { method: 'GET', url: '/api/health' },
+        { method: 'GET', url: '/api/users/constraints' },
+        { method: 'POST', url: '/api/users/sign-in' },
+        { method: 'POST', url: '/api/users/sign-up' },
+      ].forEach(route => {
+        const { method, url } = route;
 
-      it('[GET] /api/health', () => {
-        expect(validator.isAccessingWhitelistedRoute('GET', '/api/health'))
-          .toBeTruthy();
-      });
-
-      it('[POST] /users/sign-in', () => {
-        expect(validator.isAccessingWhitelistedRoute('POST', '/api/users/sign-in'))
-          .toBeTruthy();
-      });
-
-      it('[POST] /users/sign-up', () => {
-        expect(validator.isAccessingWhitelistedRoute('POST', '/api/users/sign-up'))
-          .toBeTruthy();
+        it(`[${method}] ${url}`, () => {
+          expect(validator.isAccessingWhitelistedRoute(method, url))
+            .toBeTruthy();
+        });
       });
     });
   });
