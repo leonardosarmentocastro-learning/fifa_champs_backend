@@ -21,12 +21,8 @@ describe(`[GET] ${ENDPOINT}`, () => {
     const { data: body } = response;
 
     // body
-    const { constraints, regex } = usersValidator;
-    regex.forValidatingPasswordStrength = regex.forValidatingPasswordStrength.toString();
-
-    expect(body).toEqual({
-      ...constraints,
-      regex,
-    });
+    const { constraints } = usersValidator;
+    constraints.password.regex = constraints.password.regex.toString();
+    expect(body).toEqual(constraints);
   });
 });

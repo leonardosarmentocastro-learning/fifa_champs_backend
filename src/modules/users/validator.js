@@ -9,6 +9,14 @@ const usersValidator = {
 
   get constraints() {
     return {
+      password: {
+        regex: /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+        // TODO: Maybe needs refactor.
+        rules: `Requer ao menos 8 caracteres, sendo:
+        . 1 caractere especial
+        . 1 letra maiúscula
+        . 1 letra minúscula`,
+      },
       username: {
         maxlength: 16,
       },
@@ -52,16 +60,6 @@ const usersValidator = {
         code: 'USERNAME_TOO_LONG',
         message: 'The provided "user.username" is too long.',
       },
-    };
-  },
-  get regex() {
-    return {
-      // Contain at least 1 upper case letter
-      // Contain at least 1 lower case letter
-      // Contain at least 1 number or special character
-      // Contain at least 8 characters in length
-      // maximum length should not be arbitrarily limited
-      forValidatingPasswordStrength: /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
     };
   },
 
@@ -145,7 +143,8 @@ const usersValidator = {
       return error;
     }
 
-    const isPasswordStrongEnough = this.regex.forValidatingPasswordStrength.test(password);
+    const { regex } = this.constraints.password;
+    const isPasswordStrongEnough = regex.test(password);
     if (!isPasswordStrongEnough) {
       const error = this.ERRORS.PASSWORD_NOT_STRONG_ENOUGH;
       return error;
