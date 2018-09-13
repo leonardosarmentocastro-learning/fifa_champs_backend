@@ -10,6 +10,8 @@ const usersValidator = {
   get constraints() {
     return {
       password: {
+        // I'm so mad for spending 3 hours on this fucking shit that I will save this link here forever.
+        // https://stackoverflow.com/questions/7427731/why-this-javascript-regex-doesnt-work
         stringRegex: '(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$',
         rules: `Requer ao menos 8 caracteres, sendo:
         . 1 caractere especial
