@@ -10,8 +10,7 @@ const usersValidator = {
   get constraints() {
     return {
       password: {
-        regex: /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
-        // TODO: Maybe needs refactor.
+        stringRegex: '(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$',
         rules: `Requer ao menos 8 caracteres, sendo:
         . 1 caractere especial
         . 1 letra maiúscula
@@ -143,7 +142,8 @@ const usersValidator = {
       return error;
     }
 
-    const { regex } = this.constraints.password;
+    const { stringRegex } = this.constraints.password;
+    const regex = new RegExp(stringRegex);
     const isPasswordStrongEnough = regex.test(password);
     if (!isPasswordStrongEnough) {
       const error = this.ERRORS.PASSWORD_NOT_STRONG_ENOUGH;

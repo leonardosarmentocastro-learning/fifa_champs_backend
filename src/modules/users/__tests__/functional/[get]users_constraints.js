@@ -28,7 +28,6 @@ describe(`[GET] ${ENDPOINT}`, () => {
 
     // body
     const { constraints } = usersValidator;
-    constraints.password.regex = constraints.password.regex.toString();
     constraints.expirationDate = DateTime.local().plus({ hours: 32 }).toISO();
     expect(body).toEqual(constraints);
   });
