@@ -1,7 +1,8 @@
 # fifa_champs_backend
 
 ## Roadmap
-
+2. Sign up
+  <!-- * raise "maxlength" to 24 characters -->
 3. Sign in
   * receive "email", "username" and "password"
     * if receives "email"

@@ -1,3 +1,5 @@
+const { DateTime } = require('luxon');
+
 const usersService = require('./service');
 const usersValidator = require('./validator');
 const { authenticationService } = require('../authentication');
@@ -6,6 +8,7 @@ const usersController = {
   constraints(req, res) {
     const { constraints } = usersValidator;
     constraints.password.regex = constraints.password.regex.toString();
+    constraints.expirationDate = DateTime.local().plus({ hours: 32 }).toISO();
 
     return res.status(200).json(constraints);
   },

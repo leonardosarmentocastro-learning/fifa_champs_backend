@@ -18,7 +18,7 @@ const usersValidator = {
         . 1 letra minúscula`,
       },
       username: {
-        maxlength: 16,
+        maxlength: 24,
       },
     };
   },
