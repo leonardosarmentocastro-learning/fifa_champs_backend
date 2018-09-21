@@ -27,22 +27,27 @@ const usersValidator = {
     return {
       EMAIL_ALREADY_IN_USE: {
         code: 'EMAIL_ALREADY_IN_USE',
+        field: 'email',
         message: 'The provided "user.email" is already in use.',
       },
       EMAIL_NOT_PROVIDED: {
         code: 'EMAIL_NOT_PROVIDED',
+        field: 'email',
         message: 'The property "user.email" can\'t be empty.',
       },
       EMAIL_NOT_VALID: {
         code: 'EMAIL_NOT_VALID',
+        field: 'email',
         message: 'The provided "user.email" is not valid.',
       },
       PASSWORD_NOT_PROVIDED: {
         code: 'PASSWORD_NOT_PROVIDED',
+        field: 'password',
         message: 'The property "user.password" can\'t be empty.',
       },
       PASSWORD_NOT_STRONG_ENOUGH: {
         code: 'PASSWORD_NOT_STRONG_ENOUGH',
+        field: 'password',
         message: 'The provided "password" is not strong enough.',
       },
       USER_IS_EMPTY: {
@@ -51,14 +56,17 @@ const usersValidator = {
       },
       USERNAME_ALREADY_IN_USE: {
         code: 'USERNAME_ALREADY_IN_USE',
+        field: 'username',
         message: 'The provided "user.username" is already in use.',
       },
       USERNAME_NOT_PROVIDED: {
         code: 'USERNAME_NOT_PROVIDED',
+        field: 'username',
         message: 'The property "user.username" can\'t be empty.',
       },
       USERNAME_TOO_LONG: {
         code: 'USERNAME_TOO_LONG',
+        field: 'username',
         message: 'The provided "user.username" is too long.',
       },
     };
