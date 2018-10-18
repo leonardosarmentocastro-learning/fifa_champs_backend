@@ -15,6 +15,7 @@ const authenticationService = {
     const error = this.authenticationValidator.validateForCreatingAuthorizationToken(savedUser);
     if (error) throw error;
 
+    // TODO: send all user's public fields.
     const payload = { id: savedUser._id };
     const { options, secret } = this.ENVIRONMENT_VARIABLES.authentication;
     const token = this.jwt.sign(payload, secret, options);

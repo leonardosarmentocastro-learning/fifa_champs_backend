@@ -5,6 +5,9 @@ const usersRouter = {
     app.route('/api/users/constraints')
       .get(usersController.constraints);
 
+    app.route('/api/users/me')
+      .get(usersController.me);
+
     app.route('/api/users/sign-up')
       .post(usersController.signUp);
   },
