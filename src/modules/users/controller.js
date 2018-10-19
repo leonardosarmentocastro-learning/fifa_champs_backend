@@ -22,6 +22,8 @@ const usersController = {
   // 4. functional tests.
   async me(req, res) {
     try {
+      const token = req.get('Authorization');
+
       return res.status(200).end();
     } catch (err) {
       return res.status(500).json(err);
@@ -33,8 +35,9 @@ const usersController = {
       const user = req.body;
       const savedUser = await usersService.signUp(user);
 
+      const header = 'Authorization';
       const token = authenticationService.createAuthorizationTokenForUser(savedUser);
-      authenticationService.setAuthorizationTokenOnResponse(token, res);
+      res.set(header, token);
 
       return res.status(200).end();
     } catch (err) {

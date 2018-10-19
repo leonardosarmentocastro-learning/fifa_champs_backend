@@ -4,15 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "create:environment-variables:file": "ln -sf .env.example .env",
-    "create:environment-variables:file:for-test": "ln -sf .env.test.example .env",
+    "create:environment-variables:file": "ln -sf .env.example.json .env",
     "prestart": "npm run create:environment-variables:file",
     "start": "node ./index.js",
     "start:development": "npm run prestart && nodemon ./index.js",
     "lint": "eslint src/ --fix",
     "pretest": "npm run create:environment-variables:file:for-test",
+    "set-environment-variables:for-test": "NODE_ENV=test; PORT=1234;",
     "test": "jest --verbose --forceExit --runInBand --config=./config/jest/jest.config.js",
-    "test:watch": "npm run test -- --watch"
+    "test:functional:watch": "npm run test -- --testPathPattern=functional --watch",
+    "test:unit:watch": "npm run test -- --testPathPattern=unit --watch"
   },
   "author": "Leonardo Sarmento de Castro",
   "license": "ISC",

@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { isEmpty } = require('lodash/lang');
+const { difference } = require('lodash/array');
 
 const { ENVIRONMENT_VARIABLES } = require('../../internals');
+const { sharedSchema } = require('../shared');
 
 const authenticationValidator = {
   // Dependency injection
@@ -16,13 +18,13 @@ const authenticationValidator = {
         code: 'AUTHORIZATION_TOKEN_NOT_PROVIDED',
         message: 'No authorization token was provided on the request\'s header.',
       },
-      ID_NOT_PROVIDED: {
-        code: 'ID_NOT_PROVIDED',
-        message: 'The property "user._id" can\'t be empty.',
-      },
       PASSWORD_COULDNT_BE_ENCRYPTED: {
         code: 'PASSWORD_COULDNT_BE_ENCRYPTED',
         message: 'Something went wrong while trying to encrypt the given password.',
+      },
+      TOKEN_HAS_EXPIRED: {
+        code: 'TOKEN_HAS_EXPIRED',
+        message: 'The provided "token" has already expired. Please, log in again.',
       },
       TOKEN_IS_EMPTY: {
         code: 'TOKEN_IS_EMPTY',
@@ -32,9 +34,20 @@ const authenticationValidator = {
         code: 'TOKEN_IS_INVALID',
         message: 'The provided "token" is not a valid JWT token.',
       },
-      USER_IS_EMPTY: {
-        code: 'USER_IS_EMPTY',
-        message: 'The provided "user" argument can\'t be empty.',
+      TOKEN_PAYLOAD: {
+        ID_NOT_PROVIDED: {
+          code: 'ID_NOT_PROVIDED',
+          message: 'The property "user._id" on token payload can\'t be empty.',
+        },
+        SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED: {
+          code: 'SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED',
+          message: 'The properties from "sharedSchema" on token\'s payload can\'t be empty.',
+          misc: [],
+        },
+        USER_IS_EMPTY: {
+          code: 'USER_IS_EMPTY',
+          message: 'The provided "user" argument can\'t be empty.',
+        },
       },
     };
   },
@@ -87,8 +100,18 @@ const authenticationValidator = {
     );
   },
 
-  isAnValidJwtToken(token) {
-    const tokenWithoutBearerKeyword = this.getTokenWithoutBearerKeyword(token);
+  hasJwtTokenExpired(tokenWithoutBearerKeyword) {
+    const { authentication } = this.ENVIRONMENT_VARIABLES;
+
+    try {
+      this.jwt.verify(tokenWithoutBearerKeyword, authentication.secret);
+      return false;
+    } catch (err) {
+      return (err.name === 'TokenExpiredError');
+    }
+  },
+
+  isAnValidJwtToken(tokenWithoutBearerKeyword) {
     const { authentication } = this.ENVIRONMENT_VARIABLES;
 
     try {
@@ -99,30 +122,24 @@ const authenticationValidator = {
     }
   },
 
-  validateForAttachingTokenOnResponse(token) {
-    if (isEmpty(token)) {
-      const error = this.ERRORS.USER_IS_EMPTY;
-      return error;
-    }
-
-    const isAnValidJwtToken = this.isAnValidJwtToken(token);
-    if (!isAnValidJwtToken) {
-      const error = this.ERRORS.TOKEN_IS_INVALID;
-      return error;
-    }
-
-    return null;
-  },
-
   validateForCreatingAuthorizationToken(savedUser) {
     if (isEmpty(savedUser)) {
-      const error = this.ERRORS.USER_IS_EMPTY;
+      const error = this.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY;
       return error;
     }
 
     const hasId = Boolean(savedUser._id);
     if (!hasId) {
-      const error = this.ERRORS.ID_NOT_PROVIDED;
+      const error = this.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED;
+      return error;
+    }
+
+    const properties = difference(Object.keys(sharedSchema), Object.keys(savedUser));
+    const doesContainsSharedSchemaProperties = (properties.length === 0);
+    if (!doesContainsSharedSchemaProperties) {
+      const error = this.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED;
+      error.misc = properties;
+
       return error;
     }
 
@@ -150,9 +167,16 @@ const authenticationValidator = {
       return null;
     }
 
-    const isAnValidJwtToken = this.isAnValidJwtToken(token);
+    const tokenWithoutBearerKeyword = this.getTokenWithoutBearerKeyword(token);
+    const isAnValidJwtToken = this.isAnValidJwtToken(tokenWithoutBearerKeyword);
     if (!isAnValidJwtToken) {
       const error = this.ERRORS.TOKEN_IS_INVALID;
+      return error;
+    }
+
+    const hasJwtTokenExpired = this.hasJwtTokenExpired(tokenWithoutBearerKeyword);
+    if (!hasJwtTokenExpired) {
+      const error = this.ERRORS.TOKEN_HAS_EXPIRED;
       return error;
     }
 

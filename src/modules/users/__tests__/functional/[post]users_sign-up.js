@@ -33,8 +33,8 @@ describe(`[POST] ${ENDPOINT}`, () => {
     expect(body).toBe('');
 
     // headers
-    expect(typeof headers.authorization).toBe('string');
     expect(headers.authorization).not.toBeNull();
+    expect(typeof headers.authorization).toBe('string');
   });
 
   it('(500) when receiving an empty user', () => {

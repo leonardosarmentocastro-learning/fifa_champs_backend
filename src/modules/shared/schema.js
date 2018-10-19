@@ -18,11 +18,11 @@ const sharedSchema = {
   updatedAt: {
     formattedDate: {
       type: String,
-      required: false,
+      required: true,
     },
     isoDate: {
       type: String,
-      required: false,
+      required: true,
     },
   },
 };

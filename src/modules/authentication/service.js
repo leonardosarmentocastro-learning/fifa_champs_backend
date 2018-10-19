@@ -15,8 +15,9 @@ const authenticationService = {
     const error = this.authenticationValidator.validateForCreatingAuthorizationToken(savedUser);
     if (error) throw error;
 
-    // TODO: send all user's public fields.
-    const payload = { id: savedUser._id };
+    // Export only the user public fields on the token payload.
+    const { _id, __v, privateFields, ...publicFields } = savedUser;
+    const payload = { id: _id, ...publicFields };
     const { options, secret } = this.ENVIRONMENT_VARIABLES.authentication;
     const token = this.jwt.sign(payload, secret, options);
 
@@ -32,15 +33,7 @@ const authenticationService = {
       });
 
     return encryptPassword;
-  },
-
-  setAuthorizationTokenOnResponse(token, res) {
-    const error = this.authenticationValidator.validateForAttachingTokenOnResponse(token);
-    if (error) throw error;
-
-    const header = 'Authorization';
-    res.set(header, token);
-  },
+  }
 };
 
 module.exports = authenticationService;
