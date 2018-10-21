@@ -8,6 +8,7 @@ const sharedSchema = {
       type: String,
       default: DateTime.local()
         .toFormat(SHARED_CONSTANTS.DATE_FORMAT.COMPLETE),
+      required: true,
     },
     isoDate: {
       type: String,
@@ -18,11 +19,11 @@ const sharedSchema = {
   updatedAt: {
     formattedDate: {
       type: String,
-      required: true,
+      default: '',
     },
     isoDate: {
       type: String,
-      required: true,
+      default: '',
     },
   },
 };

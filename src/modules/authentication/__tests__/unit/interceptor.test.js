@@ -55,6 +55,7 @@ describe('[unit-test] authenticationInterceptor', () => {
 
           interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
           interceptor.authenticationValidator.isAccessingUsingAnValidEnvironmentToken = () => false;
+          interceptor.authenticationValidator.hasJwtTokenExpired = () => false;
           interceptor.authenticationValidator.isAnValidJwtToken = () => true;
         });
 
@@ -96,6 +97,26 @@ describe('[unit-test] authenticationInterceptor', () => {
           interceptor.middleware(specs.req, specs.res, specs.next);
 
           const error = interceptor.authenticationValidator.ERRORS.TOKEN_IS_INVALID;
+          expect(specs.res.status).toHaveBeenCalledWith(401);
+          expect(specs.res.json).toHaveBeenCalledWith(error);
+        });
+      });
+
+      describe('', () => {
+        beforeEach(() => {
+          specs.req.header = () => 'has-provided-an-authorization-header';
+          specs.res.status = jest.fn(() => specs.res);
+
+          interceptor.authenticationValidator.isAccessingWhitelistedRoute = () => false;
+          interceptor.authenticationValidator.isAccessingUsingAnValidEnvironmentToken = () => false;
+          interceptor.authenticationValidator.isAnValidJwtToken = () => true;
+          interceptor.authenticationValidator.hasJwtTokenExpired = () => true;
+        });
+
+        it('the authorization token has expired', () => {
+          interceptor.middleware(specs.req, specs.res, specs.next);
+
+          const error = interceptor.authenticationValidator.ERRORS.TOKEN_HAS_EXPIRED;
           expect(specs.res.status).toHaveBeenCalledWith(401);
           expect(specs.res.json).toHaveBeenCalledWith(error);
         });

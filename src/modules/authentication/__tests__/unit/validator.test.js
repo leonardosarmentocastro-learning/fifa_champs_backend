@@ -1,4 +1,5 @@
 const { authenticationService, authenticationValidator } = require('../..');
+const { sharedSchema } = require('../../../shared');
 
 describe('[unit-test] authenticationValidator', () => {
   let validator = null;
@@ -143,6 +144,66 @@ describe('[unit-test] authenticationValidator', () => {
       it('it must return "true" boolean value', () => {
         const token = 'valid.jwt.token';
         expect(validator.isAnValidJwtToken(token)).toBeTruthy();
+      });
+    });
+  });
+
+  describe('[method] hasJwtTokenExpired', () => {
+    it('must return a "false" boolean in case the token has not expired', () => {
+      validator.jwt.verify = () => null;
+
+      const token = 'token-has-not-expired';
+      const hasJwtTokenExpired = validator.hasJwtTokenExpired(token);
+      expect(hasJwtTokenExpired).toBeFalsy();
+    });
+
+    it('must return a "true" boolean in case the token has expired', () => {
+      validator.jwt.verify = () => {
+        const err = { name: 'TokenExpiredError' };
+        throw err;
+      };
+
+      const token = 'token-has-expired';
+      const hasJwtTokenExpired = validator.hasJwtTokenExpired(token);
+      expect(hasJwtTokenExpired).toBeTruthy();
+    });
+  });
+
+  describe('[method] validateForCreatingAuthorizationToken', () => {
+    it('must return null when all conditions were satisfied', () => {
+      const savedUser = {
+        _id: '123',
+        name: 'Leonardo',
+        ...sharedSchema,
+      };
+      const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+
+      expect(validateForCreatingAuthorizationToken).toBeNull();
+    });
+
+    describe('must throw an error when', () => {
+      it('providing an empty "user"', () => {
+        const savedUser = {};
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+
+        expect(validateForCreatingAuthorizationToken)
+          .toEqual(validator.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY);
+      });
+
+      it('an "user" without an "id" property', () => {
+        const savedUser = { name: 'Leonardo' };
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+
+        expect(validateForCreatingAuthorizationToken)
+          .toEqual(validator.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED);
+      });
+
+      it('an "user" not contaning shared schema properties like "createdAt" or "updatedAt"', () => {
+        const savedUser = {  _id: '123', name: 'Leonardo' };
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+
+        expect(validateForCreatingAuthorizationToken)
+          .toEqual(validator.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED);
       });
     });
   });

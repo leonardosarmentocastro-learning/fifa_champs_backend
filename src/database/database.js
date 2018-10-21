@@ -8,7 +8,8 @@ const database = {
     const { mongodb } = ENVIRONMENT_VARIABLES;
 
     try {
-      const connection = await mongoose.connect(mongodb.uri);
+      const options = { useNewUrlParser: true };
+      const connection = await mongoose.connect(mongodb.uri, options);
       return connection;
     } catch (err) {
       const connectionErrorMessage = this.getConnectionErrorMessage(err);

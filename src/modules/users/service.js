@@ -16,8 +16,10 @@ const usersService = {
     user.privateFields = { password: encryptedPassword };
 
     const documentUser = new this.usersModel(user);
-    const savedUser = await documentUser.save();
-    return savedUser;
+    const savedUser = (await documentUser.save()).toObject();
+    const token = authenticationService.createAuthorizationTokenForUser(savedUser);
+
+    return token;
   },
 };
 

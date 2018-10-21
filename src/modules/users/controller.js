@@ -2,7 +2,6 @@ const { DateTime } = require('luxon');
 
 const usersService = require('./service');
 const usersValidator = require('./validator');
-const { authenticationService } = require('../authentication');
 
 const usersController = {
   constraints(req, res) {
@@ -33,10 +32,8 @@ const usersController = {
   async signUp(req, res) {
     try {
       const user = req.body;
-      const savedUser = await usersService.signUp(user);
-
+      const token = await usersService.signUp(user);
       const header = 'Authorization';
-      const token = authenticationService.createAuthorizationTokenForUser(savedUser);
       res.set(header, token);
 
       return res.status(200).end();

@@ -10,7 +10,7 @@ const { signupAnUser, removeAllUsersFromDatabase } = require('./helper');
 beforeAll(() => startWebserver());
 
 afterAll(async () => {
-  await axiosApiDocGenerator.createApiDocsForTests();
+  // await axiosApiDocGenerator.createApiDocsForTests();
   return closeWebserver();
 });
 
@@ -19,11 +19,12 @@ describe(`[GET] ${ENDPOINT}`, () => {
   beforeAll(async () => {
     await removeAllUsersFromDatabase();
 
-    const token = signupAnUser();
+    const token = await signupAnUser();
     API.defaults.headers.common['Authorization'] = token;
   });
 
+  // TODO
   it('(200) when receiving a valid authorization token', async () => {
-
+    expect(1).toBe(1);
   });
 });

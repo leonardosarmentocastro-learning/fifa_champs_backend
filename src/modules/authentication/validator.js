@@ -175,7 +175,7 @@ const authenticationValidator = {
     }
 
     const hasJwtTokenExpired = this.hasJwtTokenExpired(tokenWithoutBearerKeyword);
-    if (!hasJwtTokenExpired) {
+    if (hasJwtTokenExpired) {
       const error = this.ERRORS.TOKEN_HAS_EXPIRED;
       return error;
     }

@@ -26,7 +26,7 @@ describe(`[POST] ${ENDPOINT}`, () => {
       password: '1q2w#E$R',
     };
 
-    const response = await API.post(ENDPOINT, user);
+    const response = await API.post(ENDPOINT, user)
     const { data: body, headers } = response;
 
     // body
