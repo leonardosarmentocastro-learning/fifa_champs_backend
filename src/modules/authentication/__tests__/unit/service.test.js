@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { authenticationService } = require('../../');
+const { authenticationService, authenticationValidator } = require('../../');
 
 describe('[unit-test] authenticationService', () => {
   let service = null;
@@ -10,33 +10,46 @@ describe('[unit-test] authenticationService', () => {
   });
 
   describe('[method] createAuthorizationTokenForUser', () => {
-    // TODO: FIX-IT
-    it('returns an token that has an user with "id" no "privateFields" or mongodb related fields on its payload', () => {
-      const savedUser = {
-        _id : '5baa5987c8c29b3d0b7cda69',
+    const specs = {
+      savedUser: {
+        _id : '5bcc6162e2d4c613984c1f36',
+        __v: 0,
         createdAt: {
           formattedDate: 'Tuesday, 25 de September 2018',
           isoDate: '2018-09-25T16:18:12.893+02:00'
         },
-        privateFields: {
-          password: "$2b$10$/07N8dv58O.4rG4mAm7Kie4khPXPOlXSy47Rxm0JeMXUnXjoG.Aie"
-        },
         email: 'test@test.com',
+        privateFields: {
+          password: '$2b$10$/07N8dv58O.4rG4mAm7Kie4khPXPOlXSy47Rxm0JeMXUnXjoG.Aie'
+        },
+        updatedAt: {
+          formattedDate: '',
+          isoDate: ''
+        },
         username: 'test',
-        __v: 0
+      },
+    };
+
+    it('returns a valid jwt token', () => {
+      const token = service.createAuthorizationTokenForUser(specs.savedUser);
+      const isAnValidJwtToken = authenticationValidator.isAnValidJwtToken(token);
+
+      expect(isAnValidJwtToken).toBeTruthy();
+    });
+
+    it('returns an token that has on its payload, an user with "id" and no "privateFields" or mongodb related fields', () => {
+      const unwantedFields = {
+        _id : '5baa5987c8c29b3d0b7cda69',
+        __v: 0,
+        privateFields: {
+          password: '$2b$10$/07N8dv58O.4rG4mAm7Kie4khPXPOlXSy47Rxm0JeMXUnXjoG.Aie'
+        },
       };
 
-      try {
-        const token = service.createAuthorizationTokenForUser(savedUser);
-
-      } catch(err) {
-        console.log(err);
-      }
-
-
+      const token = service.createAuthorizationTokenForUser(specs.savedUser);
       const payload = jwt.decode(token);
       expect(payload).toEqual(
-        expect.not.objectContaining({ __v, privateFields, _id})
+        expect.not.objectContaining(unwantedFields)
       );
     });
 

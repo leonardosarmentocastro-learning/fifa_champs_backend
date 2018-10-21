@@ -100,17 +100,6 @@ const authenticationValidator = {
     );
   },
 
-  hasJwtTokenExpired(tokenWithoutBearerKeyword) {
-    const { authentication } = this.ENVIRONMENT_VARIABLES;
-
-    try {
-      this.jwt.verify(tokenWithoutBearerKeyword, authentication.secret);
-      return false;
-    } catch (err) {
-      return (err.name === 'TokenExpiredError');
-    }
-  },
-
   isAnValidJwtToken(tokenWithoutBearerKeyword) {
     const { authentication } = this.ENVIRONMENT_VARIABLES;
 
@@ -119,6 +108,17 @@ const authenticationValidator = {
       return true;
     } catch (err) {
       return false;
+    }
+  },
+
+  hasJwtTokenExpired(tokenWithoutBearerKeyword) {
+    const { authentication } = this.ENVIRONMENT_VARIABLES;
+
+    try {
+      this.jwt.verify(tokenWithoutBearerKeyword, authentication.secret);
+      return false;
+    } catch (err) {
+      return (err.name === 'TokenExpiredError');
     }
   },
 
