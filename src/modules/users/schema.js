@@ -7,8 +7,6 @@ const usersSchema = new Schema({
   email: String,
 
   // # S
-  ...sharedSchema,
-
   slack: {
     icon: String,
   },
@@ -21,5 +19,8 @@ const usersSchema = new Schema({
     password: String,
   },
 });
+
+// Inherit schemas
+usersSchema.add(sharedSchema);
 
 module.exports = usersSchema;

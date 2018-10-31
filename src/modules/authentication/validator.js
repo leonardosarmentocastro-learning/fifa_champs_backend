@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { isEmpty } = require('lodash/lang');
 const { difference } = require('lodash/array');
 
+const authenticationUtil = require('./util');
 const { ENVIRONMENT_VARIABLES } = require('../../internals');
 const { sharedSchema } = require('../shared');
 
@@ -54,20 +55,6 @@ const authenticationValidator = {
 
   async doesEncryptedAndUnencryptedValuesMatch(encryptedValue, unencryptedValue) {
     return this.bcrypt.compare(unencryptedValue, encryptedValue);
-  },
-
-  getTokenWithoutBearerKeyword(token) {
-    const keyword = 'Bearer';
-    const doesTokenHasBearerKeyword = (token.indexOf(keyword) !== -1);
-    if (!doesTokenHasBearerKeyword) {
-      return token;
-    }
-
-    const content = token.split(keyword); // ['', ' 123456.aaa.bbb']
-    let [, tokenWithoutBearerKeyword] = content; // ' 123456.aaa.bbb'
-    tokenWithoutBearerKeyword = tokenWithoutBearerKeyword.trim(); // '123456.aaa.bbb'
-
-    return tokenWithoutBearerKeyword;
   },
 
   isAccessingUsingAnValidEnvironmentToken(token) {
@@ -122,19 +109,19 @@ const authenticationValidator = {
     }
   },
 
-  validateForCreatingAuthorizationToken(savedUser) {
-    if (isEmpty(savedUser)) {
+  validateForCreatingAuthorizationToken(databaseUser) {
+    if (isEmpty(databaseUser)) {
       const error = this.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY;
       return error;
     }
 
-    const hasId = Boolean(savedUser._id);
+    const hasId = Boolean(databaseUser._id);
     if (!hasId) {
       const error = this.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED;
       return error;
     }
 
-    const properties = difference(Object.keys(sharedSchema), Object.keys(savedUser));
+    const properties = difference(Object.keys(sharedSchema.obj), Object.keys(databaseUser));
     const doesContainsSharedSchemaProperties = (properties.length === 0);
     if (!doesContainsSharedSchemaProperties) {
       const error = this.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED;
@@ -167,7 +154,7 @@ const authenticationValidator = {
       return null;
     }
 
-    const tokenWithoutBearerKeyword = this.getTokenWithoutBearerKeyword(token);
+    const tokenWithoutBearerKeyword = authenticationUtil.getTokenWithoutBearerKeyword(token);
     const isAnValidJwtToken = this.isAnValidJwtToken(tokenWithoutBearerKeyword);
     if (!isAnValidJwtToken) {
       const error = this.ERRORS.TOKEN_IS_INVALID;

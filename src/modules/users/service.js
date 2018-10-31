@@ -1,3 +1,5 @@
+const { DateTime } = require('luxon');
+
 const usersModel = require('./model');
 const usersValidator = require('./validator');
 const { authenticationService } = require('./../authentication');
@@ -8,6 +10,24 @@ const usersService = {
   get usersModel() { return usersModel; },
   get usersValidator() { return { ...usersValidator }; },
 
+  // TODO: test
+  async createNewAuthorizationToken(token) {
+    const authenticatedUser = authenticationService.decodeToken(token);
+    const databaseUser = await this.usersModel.findById(authenticatedUser.id);
+
+    const error = this.usersValidator.validateForCreatingNewAuthorizationToken(databaseUser);
+    if (error) throw error;
+
+    const lastTimeAuthenticatedUserWasUpdated = DateTime.fromISO(authenticatedUser.updatedAt.isoDate).valueOf();
+    const lastTimeDatabaseUserWasUpdated = DateTime.fromISO(databaseUser.updatedAt.isoDate).valueOf();
+    const hasToCreateNewAuthorizationTokenForUser =
+      (lastTimeAuthenticatedUserWasUpdated !== lastTimeDatabaseUserWasUpdated);
+
+    const newAuthorizationToken = (hasToCreateNewAuthorizationTokenForUser ?
+      authenticationService.createAuthorizationTokenForUser(databaseUser) : '');
+    return newAuthorizationToken;
+  },
+
   async signUp(user) {
     const error = await this.usersValidator.validateForSignUp(user);
     if (error) throw error;
@@ -16,8 +36,8 @@ const usersService = {
     user.privateFields = { password: encryptedPassword };
 
     const documentUser = new this.usersModel(user);
-    const savedUser = (await documentUser.save()).toObject();
-    const token = authenticationService.createAuthorizationTokenForUser(savedUser);
+    const databaseUser = (await documentUser.save()).toObject();
+    const token = authenticationService.createAuthorizationTokenForUser(databaseUser);
 
     return token;
   },

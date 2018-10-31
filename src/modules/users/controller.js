@@ -11,17 +11,12 @@ const usersController = {
     return res.status(200).json(constraints);
   },
 
-  // TODO:
-  // 1. get token from header
-  // 2. uncode and obtain id (check if token is valid)
-  // 3. search for user with that id
-    // check if the user have been updated since the last time a new token was given
-    // if user was not updated at all, don't return shit (so we don't update the store and avoid unnecessary re-render)
-    // if it has been updated, we generate a new token and send new user information as well.
-  // 4. functional tests.
   async me(req, res) {
     try {
-      const token = req.get('Authorization');
+      const header = 'Authorization';
+      const token = req.get(header);
+      const newAuthorizationToken = await usersService.createNewAuthorizationToken(token);
+      res.set(header, (newAuthorizationToken || token));
 
       return res.status(200).end();
     } catch (err) {

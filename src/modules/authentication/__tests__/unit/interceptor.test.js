@@ -1,4 +1,4 @@
-const authenticationInterceptor = require('../../interceptor');
+const { authenticationInterceptor } = require('../../');
 
 describe('[unit-test] authenticationInterceptor', () => {
   let interceptor = null;

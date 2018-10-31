@@ -1,4 +1,4 @@
-const { authenticationValidator } = require('../../modules/authentication');
+const authenticationValidator = require('./validator');
 
 const authenticationInterceptor = {
   // Dependency injection

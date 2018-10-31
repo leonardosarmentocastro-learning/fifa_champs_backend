@@ -100,6 +100,16 @@ const usersValidator = {
     }
   },
 
+  // TODO: test
+  validateForCreatingNewAuthorizationToken(databaseUser) {
+    if (isEmpty(databaseUser)) {
+      const error = this.ERRORS.USER_IS_EMPTY;
+      return error;
+    }
+
+    return null;
+  },
+
   async validateForSignUp(user) {
     if (isEmpty(user)) {
       const error = this.ERRORS.USER_IS_EMPTY;

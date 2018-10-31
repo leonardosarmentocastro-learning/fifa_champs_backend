@@ -11,7 +11,7 @@ describe('[unit-test] authenticationService', () => {
 
   describe('[method] createAuthorizationTokenForUser', () => {
     const specs = {
-      savedUser: {
+      databaseUser: {
         _id : '5bcc6162e2d4c613984c1f36',
         __v: 0,
         createdAt: {
@@ -31,7 +31,7 @@ describe('[unit-test] authenticationService', () => {
     };
 
     it('returns a valid jwt token', () => {
-      const token = service.createAuthorizationTokenForUser(specs.savedUser);
+      const token = service.createAuthorizationTokenForUser(specs.databaseUser);
       const isAnValidJwtToken = authenticationValidator.isAnValidJwtToken(token);
 
       expect(isAnValidJwtToken).toBeTruthy();
@@ -46,20 +46,20 @@ describe('[unit-test] authenticationService', () => {
         },
       };
 
-      const token = service.createAuthorizationTokenForUser(specs.savedUser);
+      const token = service.createAuthorizationTokenForUser(specs.databaseUser);
       const payload = jwt.decode(token);
       expect(payload).toEqual(
         expect.not.objectContaining(unwantedFields)
       );
     });
 
-    it('returns na error object when "savedUser" is inconsistent', () => {
+    it('returns na error object when "databaseUser" is inconsistent', () => {
       const error = {};
       service.authenticationValidator.validateForCreatingAuthorizationToken = () => { throw error; };
 
       try {
-        const savedUser = {};
-        service.createAuthorizationTokenForUser(savedUser);
+        const databaseUser = {};
+        service.createAuthorizationTokenForUser(databaseUser);
       } catch (err) {
         expect(err).toEqual(error);
       }

@@ -29,31 +29,6 @@ describe('[unit-test] authenticationValidator', () => {
     });
   });
 
-  describe('[method] getTokenWithoutBearerKeyword', () => {
-    describe('by receiving a token without the "Bearer" keyword', () => {
-      const specs = { tokenWithoutBearerKeyword: '123456.789.abc' };
-
-      it('it must return the token value\'s unchanged', () => {
-        const token = validator.getTokenWithoutBearerKeyword(specs.tokenWithoutBearerKeyword);
-        expect(token).toBe(specs.tokenWithoutBearerKeyword);
-      });
-    });
-
-    describe('by receiving a token with the "Bearer" keyword', () => {
-      describe('(e.g. "Bearer 123456.789.abc")', () => {
-        const specs = {
-          tokenWithBearerKeyword: 'Bearer 123456.789.abc',
-          tokenWithoutBearerKeyword: '123456.789.abc',
-        };
-
-        it('it must return the string after the "Bearer" keyword', () => {
-          const token = validator.getTokenWithoutBearerKeyword(specs.tokenWithBearerKeyword);
-          expect(token).toBe(specs.tokenWithoutBearerKeyword);
-        });
-      });
-    });
-  });
-
   describe('[method] isAccessingUsingAnValidEnvironmentToken', () => {
     describe('if the current application environment is "production"', () => {
       beforeEach(() => {
@@ -171,36 +146,36 @@ describe('[unit-test] authenticationValidator', () => {
 
   describe('[method] validateForCreatingAuthorizationToken', () => {
     it('must return null when all conditions were satisfied', () => {
-      const savedUser = {
+      const databaseUser = {
         _id: '123',
         name: 'Leonardo',
-        ...sharedSchema,
+        ...sharedSchema.obj,
       };
-      const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+      const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
 
       expect(validateForCreatingAuthorizationToken).toBeNull();
     });
 
     describe('must throw an error when', () => {
       it('providing an empty "user"', () => {
-        const savedUser = {};
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+        const databaseUser = {};
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
 
         expect(validateForCreatingAuthorizationToken)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY);
       });
 
       it('an "user" without an "id" property', () => {
-        const savedUser = { name: 'Leonardo' };
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+        const databaseUser = { name: 'Leonardo' };
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
 
         expect(validateForCreatingAuthorizationToken)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED);
       });
 
       it('an "user" not contaning shared schema properties like "createdAt" or "updatedAt"', () => {
-        const savedUser = {  _id: '123', name: 'Leonardo' };
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(savedUser);
+        const databaseUser = {  _id: '123', name: 'Leonardo' };
+        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
 
         expect(validateForCreatingAuthorizationToken)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED);

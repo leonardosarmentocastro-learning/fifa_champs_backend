@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const authenticationUtil = require('./util');
 const authenticationValidator = require('./validator');
 const { ENVIRONMENT_VARIABLES } = require('../../internals');
 
@@ -11,17 +12,25 @@ const authenticationService = {
   get ENVIRONMENT_VARIABLES() { return { ...ENVIRONMENT_VARIABLES }; },
   get jwt() { return { ...jwt }; },
 
-  createAuthorizationTokenForUser(savedUser) {
-    const error = this.authenticationValidator.validateForCreatingAuthorizationToken(savedUser);
+  createAuthorizationTokenForUser(databaseUser) {
+    const error = this.authenticationValidator.validateForCreatingAuthorizationToken(databaseUser);
     if (error) throw error;
 
     // Export only the user public fields on the token payload.
-    const { _id, __v, privateFields, ...publicFields } = savedUser;
+    const { _id, __v, privateFields, ...publicFields } = databaseUser;
     const payload = { id: _id, ...publicFields };
     const { options, secret } = this.ENVIRONMENT_VARIABLES.authentication;
     const token = this.jwt.sign(payload, secret, options);
 
     return token;
+  },
+
+  // TODO: test
+  decodeToken(token) {
+    const tokenWithoutBearerKeyword = authenticationUtil.getTokenWithoutBearerKeyword(token);
+    const payload = this.jwt.decode(tokenWithoutBearerKeyword);
+
+    return payload;
   },
 
   async encryptPassword(password) {
