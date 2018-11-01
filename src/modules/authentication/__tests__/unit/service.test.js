@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const { authenticationService, authenticationValidator } = require('../../');
+const { sharedSchema } = require('../../../shared');
 
 describe('[unit-test] authenticationService', () => {
   let service = null;
@@ -63,6 +64,45 @@ describe('[unit-test] authenticationService', () => {
       } catch (err) {
         expect(err).toEqual(error);
       }
+    });
+  });
+
+  describe('[method] decodeToken', () => {
+    const specs = {
+      jwtKeys: ['iat', 'exp'],
+      user: {
+        _id: '123',
+        email: 'test@test.com',
+        ...sharedSchema.obj,
+      },
+    };
+    const expectationsForTest = (payload) => {
+      expect(payload).toHaveProperty('id', specs.user._id);
+      expect(payload).toHaveProperty('email', specs.user.email);
+
+      Object.keys(sharedSchema.obj)
+        .forEach(key => expect(payload).toHaveProperty(key));
+      specs.jwtKeys
+        .forEach(key => expect(payload).toHaveProperty(key));
+    };
+
+    describe('by receiving a token containing the "Bearer" keyword', () => {
+      it('must return the jwt token payload', () => {
+        const token = service.createAuthorizationTokenForUser(specs.user);
+        const tokenWithBearerKeyword = `Bearer ${token}`;
+        const payload = service.decodeToken(tokenWithBearerKeyword);
+
+        expectationsForTest(payload);
+      });
+    });
+
+    describe('by receiving a token that doesn\'t contain the "Bearer" keyword', () => {
+      it('must return the jwt token payload', () => {
+        const token = service.createAuthorizationTokenForUser(specs.user);
+        const payload = service.decodeToken(token);
+
+        expectationsForTest(payload);
+      });
     });
   });
 

@@ -25,7 +25,6 @@ const authenticationService = {
     return token;
   },
 
-  // TODO: test
   decodeToken(token) {
     const tokenWithoutBearerKeyword = authenticationUtil.getTokenWithoutBearerKeyword(token);
     const payload = this.jwt.decode(tokenWithoutBearerKeyword);
