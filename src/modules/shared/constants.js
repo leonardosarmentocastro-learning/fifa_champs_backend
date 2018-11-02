@@ -4,10 +4,10 @@ const dayOfMonth = 'dd';
 const monthUnabbreviated = 'MMMM';
 const fourDigitYear = 'yyyy';
 
-const SHARED_CONTANTS = {
+const SHARED_CONSTANTS = {
   DATE_FORMAT: {
     COMPLETE: `${dayOfWeek}, ${dayOfMonth} 'de' ${monthUnabbreviated} ${fourDigitYear}`,
   },
 };
 
-module.exports = SHARED_CONTANTS;
+module.exports = SHARED_CONSTANTS;

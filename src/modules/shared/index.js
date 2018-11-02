@@ -1,3 +1,3 @@
 exports.configureShared = require('./configure');
-exports.SHARED_CONTANTS = require('./constants');
+exports.SHARED_CONSTANTS = require('./constants');
 exports.sharedSchema = require('./schema');

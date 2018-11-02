@@ -32,7 +32,6 @@ const sharedSchema = new Schema({
   },
 });
 
-// TODO: test
 // Middlewares
 sharedSchema.pre('save', function(next) {
   this.updatedAt.formattedDate = DateTime.local().toFormat(SHARED_CONSTANTS.DATE_FORMAT.COMPLETE);

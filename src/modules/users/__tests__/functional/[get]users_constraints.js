@@ -1,11 +1,12 @@
 const axiosApiDocGenerator = require('axios-api-doc-generator');
-const { DateTime, Settings } = require('luxon');
+const { DateTime } = require('luxon');
 
 const {
   API: { withoutAuthentication: API },
   closeWebserver,
   startWebserver,
 } = require('../../../../helpers/functional-tests-helper');
+const { generalTestsHelper } = require('../../../../helpers');
 const { usersValidator } = require('../../');
 
 beforeAll(() => startWebserver());
@@ -18,8 +19,8 @@ afterAll(async () => {
 const ENDPOINT = '/api/users/constraints';
 describe(`[GET] ${ENDPOINT}`, () => {
   beforeEach(() => {
-    // Freeze the time to always return "1st of January 2018" whenever "DateTime.local()" is called.
-    Settings.now = () => new Date(2018, 1, 1).valueOf();
+    const year = 2018, month = 0, day = 1;
+    generalTestsHelper.freezeTime(year, month, day);
   });
 
   it('(200) returns a payload', async () => {
