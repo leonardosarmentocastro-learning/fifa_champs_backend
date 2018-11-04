@@ -11,7 +11,7 @@
     "start:development": "npm run prestart && nodemon ./index.js",
     "lint": "eslint src/ --fix",
     "pretest": "npm run create:environment-variables:file:for-test",
-    "test": "jest --verbose --forceExit --runInBand --detectOpenHandles --config=./config/jest/jest.config.js",
+    "test": "jest --forceExit --runInBand --detectOpenHandles --config=./config/jest/jest.config.js",
     "test:functional:watch": "npm run test -- --testPathPattern=functional --watch",
     "test:unit:watch": "npm run test -- --testPathPattern=unit --watch"
   },

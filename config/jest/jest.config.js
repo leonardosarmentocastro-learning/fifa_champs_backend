@@ -8,6 +8,8 @@ module.exports = {
     '/__tests__/unit/helper',
   ],
 
+  verbose: false,
+
   // "axios-api-doc-generator" related.
   globalSetup: "<rootDir>/config/jest/global-setup.js",
   globalTeardown: "<rootDir>/config/jest/global-teardown.js",

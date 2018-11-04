@@ -13,11 +13,12 @@ const authenticationService = {
   get jwt() { return { ...jwt }; },
 
   createAuthorizationTokenForUser(databaseUser) {
-    const error = this.authenticationValidator.validateForCreatingAuthorizationToken(databaseUser);
+    const plainUser = databaseUser.toObject(); // Transforms the MongoDB user instance model into a plain object.
+    const error = this.authenticationValidator.validateForCreatingAuthorizationToken(plainUser);
     if (error) throw error;
 
     // Export only the user public fields on the token payload.
-    const { _id, __v, privateFields, ...publicFields } = databaseUser;
+    const { _id, __v, privateFields, ...publicFields } = plainUser;
     const payload = { id: _id, ...publicFields };
     const { options, secret } = this.ENVIRONMENT_VARIABLES.authentication;
     const token = this.jwt.sign(payload, secret, options);

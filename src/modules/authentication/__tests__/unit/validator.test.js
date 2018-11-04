@@ -146,38 +146,38 @@ describe('[unit-test] authenticationValidator', () => {
 
   describe('[method] validateForCreatingAuthorizationToken', () => {
     it('must return null when all conditions were satisfied', () => {
-      const databaseUser = {
+      const plainUser = {
         _id: '123',
         name: 'Leonardo',
         ...sharedSchema.obj,
       };
-      const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
+      const error = validator.validateForCreatingAuthorizationToken(plainUser);
 
-      expect(validateForCreatingAuthorizationToken).toBeNull();
+      expect(error).toBeNull();
     });
 
     describe('must throw an error when', () => {
       it('providing an empty "user"', () => {
-        const databaseUser = {};
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
+        const plainUser = {};
+        const error = validator.validateForCreatingAuthorizationToken(plainUser);
 
-        expect(validateForCreatingAuthorizationToken)
+        expect(error)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY);
       });
 
       it('an "user" without an "id" property', () => {
-        const databaseUser = { name: 'Leonardo' };
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
+        const plainUser = { name: 'Leonardo' };
+        const error = validator.validateForCreatingAuthorizationToken(plainUser);
 
-        expect(validateForCreatingAuthorizationToken)
+        expect(error)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED);
       });
 
       it('an "user" not contaning shared schema properties like "createdAt" or "updatedAt"', () => {
-        const databaseUser = {  _id: '123', name: 'Leonardo' };
-        const validateForCreatingAuthorizationToken = validator.validateForCreatingAuthorizationToken(databaseUser);
+        const plainUser = {  _id: '123', name: 'Leonardo' };
+        const error = validator.validateForCreatingAuthorizationToken(plainUser);
 
-        expect(validateForCreatingAuthorizationToken)
+        expect(error)
           .toEqual(validator.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED);
       });
     });

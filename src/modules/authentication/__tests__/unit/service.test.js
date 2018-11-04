@@ -13,21 +13,27 @@ describe('[unit-test] authenticationService', () => {
   describe('[method] createAuthorizationTokenForUser', () => {
     const specs = {
       databaseUser: {
-        _id : '5bcc6162e2d4c613984c1f36',
-        __v: 0,
-        createdAt: {
-          formattedDate: 'Tuesday, 25 de September 2018',
-          isoDate: '2018-09-25T16:18:12.893+02:00'
-        },
-        email: 'test@test.com',
-        privateFields: {
-          password: '$2b$10$/07N8dv58O.4rG4mAm7Kie4khPXPOlXSy47Rxm0JeMXUnXjoG.Aie'
-        },
-        updatedAt: {
-          formattedDate: '',
-          isoDate: ''
-        },
-        username: 'test',
+        toObject() {
+          const plainUser = {
+            _id : '5bcc6162e2d4c613984c1f36',
+            __v: 0,
+            createdAt: {
+              formattedDate: 'Tuesday, 25 de September 2018',
+              isoDate: '2018-09-25T16:18:12.893+02:00'
+            },
+            email: 'test@test.com',
+            privateFields: {
+              password: '$2b$10$/07N8dv58O.4rG4mAm7Kie4khPXPOlXSy47Rxm0JeMXUnXjoG.Aie'
+            },
+            updatedAt: {
+              formattedDate: '',
+              isoDate: ''
+            },
+            username: 'test',
+          };
+
+          return plainUser;
+        }
       },
     };
 
@@ -59,7 +65,9 @@ describe('[unit-test] authenticationService', () => {
       service.authenticationValidator.validateForCreatingAuthorizationToken = () => { throw error; };
 
       try {
-        const databaseUser = {};
+        const databaseUser = {
+          toObject() { return {}; },
+        };
         service.createAuthorizationTokenForUser(databaseUser);
       } catch (err) {
         expect(err).toEqual(error);
@@ -70,15 +78,22 @@ describe('[unit-test] authenticationService', () => {
   describe('[method] decodeToken', () => {
     const specs = {
       jwtKeys: ['iat', 'exp'],
-      user: {
-        _id: '123',
-        email: 'test@test.com',
-        ...sharedSchema.obj,
+      databaseUser: {
+        toObject() {
+          const plainUser = {
+            _id: '123',
+            email: 'test@test.com',
+            ...sharedSchema.obj,
+          };
+
+          return plainUser;
+        },
       },
     };
     const expectationsForTest = (payload) => {
-      expect(payload).toHaveProperty('id', specs.user._id);
-      expect(payload).toHaveProperty('email', specs.user.email);
+      const plainUser = specs.databaseUser.toObject();
+      expect(payload).toHaveProperty('id', plainUser._id);
+      expect(payload).toHaveProperty('email', plainUser.email);
 
       Object.keys(sharedSchema.obj)
         .forEach(key => expect(payload).toHaveProperty(key));
@@ -88,7 +103,7 @@ describe('[unit-test] authenticationService', () => {
 
     describe('by receiving a token containing the "Bearer" keyword', () => {
       it('must return the jwt token payload', () => {
-        const token = service.createAuthorizationTokenForUser(specs.user);
+        const token = service.createAuthorizationTokenForUser(specs.databaseUser);
         const tokenWithBearerKeyword = `Bearer ${token}`;
         const payload = service.decodeToken(tokenWithBearerKeyword);
 
@@ -98,7 +113,7 @@ describe('[unit-test] authenticationService', () => {
 
     describe('by receiving a token that doesn\'t contain the "Bearer" keyword', () => {
       it('must return the jwt token payload', () => {
-        const token = service.createAuthorizationTokenForUser(specs.user);
+        const token = service.createAuthorizationTokenForUser(specs.databaseUser);
         const payload = service.decodeToken(token);
 
         expectationsForTest(payload);

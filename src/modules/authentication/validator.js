@@ -109,19 +109,19 @@ const authenticationValidator = {
     }
   },
 
-  validateForCreatingAuthorizationToken(databaseUser) {
-    if (isEmpty(databaseUser)) {
+  validateForCreatingAuthorizationToken(plainUser) {
+    if (isEmpty(plainUser)) {
       const error = this.ERRORS.TOKEN_PAYLOAD.USER_IS_EMPTY;
       return error;
     }
 
-    const hasId = Boolean(databaseUser._id);
+    const hasId = Boolean(plainUser._id);
     if (!hasId) {
       const error = this.ERRORS.TOKEN_PAYLOAD.ID_NOT_PROVIDED;
       return error;
     }
 
-    const properties = difference(Object.keys(sharedSchema.obj), Object.keys(databaseUser));
+    const properties = difference(Object.keys(sharedSchema.obj), Object.keys(plainUser));
     const doesContainsSharedSchemaProperties = (properties.length === 0);
     if (!doesContainsSharedSchemaProperties) {
       const error = this.ERRORS.TOKEN_PAYLOAD.SHARED_SCHEMA_PROPERTIES_NOT_PROVIDED;

@@ -10,7 +10,6 @@ const usersService = {
   get usersModel() { return usersModel; },
   get usersValidator() { return { ...usersValidator }; },
 
-  // TODO: test
   async createNewAuthorizationToken(token) {
     const authenticatedUser = authenticationService.decodeToken(token);
     const databaseUser = await this.usersModel.findById(authenticatedUser.id);
@@ -21,7 +20,7 @@ const usersService = {
     const lastTimeAuthenticatedUserWasUpdated = DateTime.fromISO(authenticatedUser.updatedAt.isoDate).valueOf();
     const lastTimeDatabaseUserWasUpdated = DateTime.fromISO(databaseUser.updatedAt.isoDate).valueOf();
     const hasToCreateNewAuthorizationTokenForUser =
-      (lastTimeAuthenticatedUserWasUpdated !== lastTimeDatabaseUserWasUpdated);
+      (lastTimeAuthenticatedUserWasUpdated < lastTimeDatabaseUserWasUpdated);
 
     const newAuthorizationToken = (hasToCreateNewAuthorizationTokenForUser ?
       authenticationService.createAuthorizationTokenForUser(databaseUser) : '');
@@ -36,7 +35,7 @@ const usersService = {
     user.privateFields = { password: encryptedPassword };
 
     const documentUser = new this.usersModel(user);
-    const databaseUser = (await documentUser.save()).toObject();
+    const databaseUser = (await documentUser.save());
     const token = authenticationService.createAuthorizationTokenForUser(databaseUser);
 
     return token;
